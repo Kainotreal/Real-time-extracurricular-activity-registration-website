@@ -24,6 +24,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Đăng ký các services
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IScheduleOptimizationService, ScheduleOptimizationService>();
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IRecommenderService, RecommenderService>();
 
 // CHỈ GIỮ LẠI 1 CẤU HÌNH IDENTITY DUY NHẤT
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)

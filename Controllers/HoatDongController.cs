@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -18,12 +18,14 @@ namespace QuanLyHoatDongNgoaiKhoa.Controllers
         private readonly AppDbContext _context;
         private readonly INotificationService _notificationService;
         private readonly IScheduleOptimizationService _scheduleService;
+        private readonly IRecommenderService _recommenderService;
 
-        public HoatDongController(AppDbContext context, INotificationService notificationService, IScheduleOptimizationService scheduleService)
+        public HoatDongController(AppDbContext context, INotificationService notificationService, IScheduleOptimizationService scheduleService, IRecommenderService recommenderService)
         {
             _context = context;
             _notificationService = notificationService;
             _scheduleService = scheduleService;
+            _recommenderService = recommenderService;
         }
 
         // GET: HoatDong
@@ -69,6 +71,31 @@ namespace QuanLyHoatDongNgoaiKhoa.Controllers
             {
                 return NotFound();
             }
+
+            var allActiveActivities = await _context.HoatDongs
+                .Where(h => h.MaTrangThai == 2) // Lấy tất cả hoạt động đã được xác nhận
+                .ToListAsync();
+
+            if (!allActiveActivities.Any(h => h.MaHoatDong == id))
+            {
+                allActiveActivities.Add(hoatDong);
+            }
+
+            var recommendedIds = await _recommenderService.GetRecommendedActivityIdsAsync(hoatDong.MaHoatDong, allActiveActivities, 4);
+
+            var relatedActivities = new List<HoatDong>();
+            if (recommendedIds != null && recommendedIds.Any())
+            {
+                relatedActivities = await _context.HoatDongs
+                    .Include(h => h.TrangThaiHoatDong)
+                    .Include(h => h.DiaDiem)
+                    .Where(h => recommendedIds.Contains(h.MaHoatDong))
+                    .ToListAsync();
+                    
+                relatedActivities = relatedActivities.OrderBy(h => recommendedIds.IndexOf(h.MaHoatDong)).ToList();
+            }
+
+            ViewBag.RelatedActivities = relatedActivities;
 
             return View(hoatDong);
         }

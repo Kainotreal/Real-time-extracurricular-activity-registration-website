@@ -40,6 +40,13 @@ Hệ thống đã được cập nhật để tất cả các chức năng đề
 - ✅ Hiển thị trong "Thông báo của tôi"
 - ✅ Âm thanh và animation đẹp mắt
 
+### 7. **Hệ Thống Gợi Ý Bằng AI (Content-Based Recommender System)**
+- ✅ Xây dựng bằng Python FastAPI & scikit-learn
+- ✅ Thuật toán TF-IDF kết hợp Cosine Similarity phân tích ngôn ngữ tự nhiên
+- ✅ Tự động tính toán độ tương đồng nội dung giữa hoạt động hiện tại và các hoạt động khác
+- ✅ Gợi ý thông minh Top 4 hoạt động liên quan ngay bên dưới trang chi tiết sự kiện
+- ✅ Giao tiếp liên dịch vụ (Microservices architecture) giữa ASP.NET Core backend và Python AI service
+
 ## 🎯 Cách Sử Dụng
 
 ### **Cho Admin:**
@@ -77,6 +84,18 @@ Hệ thống đã được cập nhật để tất cả các chức năng đề
 ### **Views:**
 - `_ActivityList.cshtml` - Partial view cho danh sách hoạt động
 - `_Layout.cshtml` - Thêm scripts và CSS realtime
+- `Details.cshtml` - Thêm phần UI hiển thị danh sách hoạt động gợi ý
+
+### **Python Microservice (AI Recommender):**
+- Thư mục `python_recommender/`: Chứa file `main.py` (FastAPI) chuyên xử lý text (Tokenization, TF-IDF Vectorization, Cosine Similarity) và `requirements.txt`.
+- `Services/RecommenderService.cs` - Tích hợp `HttpClient` gọi nội bộ sang Python API lấy IDs độ chính xác cao.
+
+## 🚀 Hướng Dẫn Chạy Cụm Service AI (Recommender System)
+Để tiện ích gợi ý hoạt động dựa trên NLP chạy được, trước khi `dotnet run`, bạn cần bật API Python độc lập lên:
+1. Mở terminal, đi vào thư mục engine: `cd python_recommender`
+2. Cài đặt các thư viện lõi: `py -m pip install -r requirements.txt` (hoặc `python -m pip...`)
+3. Bật FastAPI Server độc lập: `py -m uvicorn main:app --port 8000`
+4. Mở tab terminal khác ở thư mục gốc và chạy `dotnet run` như bình thường.
 
 ## 🎨 Hiệu Ứng Realtime
 

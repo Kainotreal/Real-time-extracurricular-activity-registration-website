@@ -756,3 +756,4 @@ C:\Users\ADMIN\OneDrive\Máy tính\FileCuaTri\ĐAMMT\QuanLyHoatDongNgoaiKhoa\obj
 C:\Users\ADMIN\OneDrive\Máy tính\FileCuaTri\ĐAMMT\QuanLyHoatDongNgoaiKhoa\obj\Debug\net9.0\QuanLyHoatDongNgoaiKhoa.pdb
 C:\Users\ADMIN\OneDrive\Máy tính\FileCuaTri\ĐAMMT\QuanLyHoatDongNgoaiKhoa\obj\Debug\net9.0\QuanLyHoatDongNgoaiKhoa.genruntimeconfig.cache
 C:\Users\ADMIN\OneDrive\Máy tính\FileCuaTri\ĐAMMT\QuanLyHoatDongNgoaiKhoa\obj\Debug\net9.0\ref\QuanLyHoatDongNgoaiKhoa.dll
+C:\Users\ADMIN\OneDrive\Máy tính\FileCuaTri\ĐAMMT\QuanLyHoatDongNgoaiKhoa\obj\Debug\net9.0\QuanLyHoatDongNgoaiKhoa.sourcelink.json
