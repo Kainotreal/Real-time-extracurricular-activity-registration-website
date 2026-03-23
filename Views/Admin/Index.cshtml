@@ -1,0 +1,602 @@
+@model QuanLyHoatDongNgoaiKhoa.ViewModels.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="admin-dashboard">
+    <!-- Header Section -->
+    <div class="dashboard-header">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @if (TempData["InfoMessage"] != null)
+        {
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <i class="fas fa-info-circle me-2"></i>@TempData["InfoMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        <div class="header-content">
+            <div class="header-title">
+                <i class="fas fa-shield-alt header-icon"></i>
+                <h1>Admin Dashboard</h1>
+            </div>
+            <div class="header-subtitle">
+                <p>Quản lý hệ thống hoạt động ngoại khóa</p>
+            </div>
+        </div>
+        <div class="header-decoration">
+            <div class="floating-shapes">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="shape shape-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-section">
+        <div class="row">
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card users-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number">@ViewBag.TotalUsers</h3>
+                        <p class="stat-label">Người dùng</p>
+                    </div>
+                    <div class="stat-decoration"></div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card activities-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number">@ViewBag.TotalActivities</h3>
+                        <p class="stat-label">Hoạt động</p>
+                    </div>
+                    <div class="stat-decoration"></div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card registrations-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number">@ViewBag.TotalRegistrations</h3>
+                        <p class="stat-label">Đăng ký</p>
+                    </div>
+                    <div class="stat-decoration"></div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card pending-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number">@ViewBag.PendingRegistrations</h3>
+                        <p class="stat-label">Chờ xác nhận</p>
+                    </div>
+                    <div class="stat-decoration"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions-section">
+        <div class="section-header">
+            <h2><i class="fas fa-bolt"></i> Thao tác nhanh</h2>
+        </div>
+        <div class="row">
+            <div class="col-md-3 col-sm-6">
+                <a href="/Admin/Users" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                    <h4>Quản lý người dùng</h4>
+                    <p>Thêm, sửa, xóa người dùng và phân quyền</p>
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <a href="/HoatDong/Create" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <h4>Tạo hoạt động</h4>
+                    <p>Tạo hoạt động ngoại khóa mới</p>
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <a href="/DangKyThamGia/XacNhanList" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-check-double"></i>
+                    </div>
+                    <h4>Xác nhận đăng ký</h4>
+                    <p>Xử lý đăng ký chờ xác nhận</p>
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <a href="/Admin/Reports" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h4>Báo cáo</h4>
+                    <p>Xem báo cáo thống kê hệ thống</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activities -->
+    <div class="recent-activities-section">
+        <div class="section-header">
+            <h2><i class="fas fa-history"></i> Hoạt động gần đây</h2>
+        </div>
+        <div class="activities-timeline">
+            @if (ViewBag.RecentActivities != null)
+            {
+                foreach (var activity in ViewBag.RecentActivities)
+                {
+                    <div class="timeline-item">
+                        <div class="timeline-icon">
+                            <i class="fas fa-@activity.Icon"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h4>@activity.Title</h4>
+                            <p>@activity.Description</p>
+                            <span class="timeline-time">@activity.Time.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-timeline">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Chưa có hoạt động nào gần đây</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- System Status -->
+    <div class="system-status-section">
+        <div class="section-header">
+            <h2><i class="fas fa-server"></i> Trạng thái hệ thống</h2>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="status-card">
+                    <div class="status-header">
+                        <i class="fas fa-database"></i>
+                        <h4>Database</h4>
+                    </div>
+                    <div class="status-indicator online">
+                        <span class="status-dot"></span>
+                        <span>Online</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="status-card">
+                    <div class="status-header">
+                        <i class="fas fa-signal"></i>
+                        <h4>SignalR</h4>
+                    </div>
+                    <div class="status-indicator online">
+                        <span class="status-dot"></span>
+                        <span>Connected</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.admin-dashboard {
+    padding: 20px;
+    background: linear-gradient(135deg, var(--pixel-blue-pastel), var(--pixel-blue-light));
+    min-height: 100vh;
+}
+
+/* Dashboard Header */
+.dashboard-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: var(--pixel-border);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--pixel-shadow);
+}
+
+.header-content {
+    position: relative;
+    z-index: 2;
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.header-icon {
+    font-size: 2.5rem;
+    color: var(--pixel-blue-dark);
+    text-shadow: 2px 2px 0px var(--pixel-black);
+}
+
+.header-title h1 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 2rem;
+    color: var(--pixel-blue-dark);
+    margin: 0;
+    text-shadow: 2px 2px 0px var(--pixel-black);
+}
+
+.header-subtitle p {
+    font-family: 'VT323', monospace;
+    font-size: 1.2rem;
+    color: var(--pixel-dark);
+    margin: 0;
+}
+
+.header-decoration {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 100%;
+    opacity: 0.1;
+}
+
+.floating-shapes {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.shape {
+    position: absolute;
+    background: var(--pixel-blue-dark);
+    border-radius: 50%;
+    animation: float 6s ease-in-out infinite;
+}
+
+.shape-1 {
+    width: 60px;
+    height: 60px;
+    top: 20%;
+    right: 20%;
+    animation-delay: 0s;
+}
+
+.shape-2 {
+    width: 40px;
+    height: 40px;
+    top: 60%;
+    right: 60%;
+    animation-delay: 2s;
+}
+
+.shape-3 {
+    width: 30px;
+    height: 30px;
+    top: 40%;
+    right: 40%;
+    animation-delay: 4s;
+}
+
+@@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+/* Stats Section */
+.stats-section {
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: var(--pixel-border);
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--pixel-shadow);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card .stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.users-card .stat-icon { color: var(--pixel-blue-dark); }
+.activities-card .stat-icon { color: var(--pixel-green); }
+.registrations-card .stat-icon { color: var(--pixel-yellow); }
+.pending-card .stat-icon { color: var(--pixel-red); }
+
+.stat-content {
+    text-align: center;
+}
+
+.stat-number {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 2rem;
+    color: var(--pixel-blue-dark);
+    margin: 0 0 5px 0;
+    text-shadow: 2px 2px 0px var(--pixel-black);
+}
+
+.stat-label {
+    font-family: 'VT323', monospace;
+    font-size: 1.1rem;
+    color: var(--pixel-dark);
+    margin: 0;
+    font-weight: bold;
+}
+
+.stat-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--pixel-blue-pastel), var(--pixel-blue-light));
+}
+
+/* Quick Actions */
+.quick-actions-section {
+    margin-bottom: 30px;
+}
+
+.section-header {
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.5rem;
+    color: var(--pixel-blue-dark);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.action-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: var(--pixel-border);
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 20px;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: all 0.3s ease;
+    box-shadow: var(--pixel-shadow);
+}
+
+.action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+    color: inherit;
+}
+
+.action-icon {
+    font-size: 2.5rem;
+    color: var(--pixel-blue-dark);
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.action-card h4 {
+    font-family: 'VT323', monospace;
+    font-size: 1.3rem;
+    color: var(--pixel-blue-dark);
+    margin: 0 0 10px 0;
+    text-align: center;
+    font-weight: bold;
+}
+
+.action-card p {
+    font-family: 'VT323', monospace;
+    font-size: 1rem;
+    color: var(--pixel-dark);
+    margin: 0;
+    text-align: center;
+}
+
+/* Recent Activities */
+.recent-activities-section {
+    margin-bottom: 30px;
+}
+
+.activities-timeline {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: var(--pixel-border);
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: var(--pixel-shadow);
+}
+
+.timeline-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--pixel-blue-light);
+}
+
+.timeline-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.timeline-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--pixel-blue-light);
+    border: var(--pixel-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--pixel-blue-dark);
+    font-size: 1.2rem;
+}
+
+.timeline-content {
+    flex: 1;
+}
+
+.timeline-content h4 {
+    font-family: 'VT323', monospace;
+    font-size: 1.2rem;
+    color: var(--pixel-blue-dark);
+    margin: 0 0 5px 0;
+    font-weight: bold;
+}
+
+.timeline-content p {
+    font-family: 'VT323', monospace;
+    font-size: 1rem;
+    color: var(--pixel-dark);
+    margin: 0 0 5px 0;
+}
+
+.timeline-time {
+    font-family: 'VT323', monospace;
+    font-size: 0.9rem;
+    color: var(--pixel-blue-dark);
+    opacity: 0.8;
+}
+
+.empty-timeline {
+    text-align: center;
+    padding: 40px;
+    color: var(--pixel-dark);
+}
+
+.empty-timeline i {
+    font-size: 3rem;
+    color: var(--pixel-blue-light);
+    margin-bottom: 15px;
+}
+
+/* System Status */
+.system-status-section {
+    margin-bottom: 30px;
+}
+
+.status-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: var(--pixel-border);
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: var(--pixel-shadow);
+}
+
+.status-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.status-header i {
+    font-size: 1.5rem;
+    color: var(--pixel-blue-dark);
+}
+
+.status-header h4 {
+    font-family: 'VT323', monospace;
+    font-size: 1.2rem;
+    color: var(--pixel-blue-dark);
+    margin: 0;
+    font-weight: bold;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'VT323', monospace;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--pixel-black);
+}
+
+.status-indicator.online .status-dot {
+    background: var(--pixel-green);
+}
+
+.status-indicator.online span {
+    color: var(--pixel-green);
+}
+
+@@media (max-width: 768px) {
+    .header-title h1 {
+        font-size: 1.5rem;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .action-card {
+        padding: 20px;
+    }
+    
+    .action-icon {
+        font-size: 2rem;
+    }
+}
+</style> 

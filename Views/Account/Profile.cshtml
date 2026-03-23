@@ -1,0 +1,339 @@
+@model QuanLyHoatDongNgoaiKhoa.Controllers.ProfileViewModel
+
+@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
+}
+
+<style>
+    .profile-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .profile-card {
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: none;
+        margin-bottom: 20px;
+    }
+
+    .profile-card .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px 15px 0 0 !important;
+        border: none;
+        padding: 20px;
+    }
+
+    .profile-info {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .info-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        padding: 10px 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #495057;
+        min-width: 150px;
+        display: flex;
+        align-items: center;
+    }
+
+    .info-value {
+        color: #333;
+        flex: 1;
+    }
+
+    .info-icon {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+    }
+
+    .role-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin: 2px;
+    }
+
+    .role-admin {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+    }
+
+    .role-teacher {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+    }
+
+    .role-student {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+    }
+
+    .btn-custom {
+        border-radius: 25px;
+        padding: 10px 25px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-control-custom {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        padding: 12px 15px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control-custom:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .status-indicator {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+
+    .status-active {
+        background-color: #28a745;
+    }
+
+    .status-locked {
+        background-color: #dc3545;
+    }
+
+    .status-pending {
+        background-color: #ffc107;
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- Hiển thị thông báo -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="profile-container">
+        <div class="card profile-card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-user-circle me-2"></i> Hồ sơ cá nhân
+                    </h3>
+                    <a asp-action="Index" asp-controller="Home" class="btn btn-light btn-custom">
+                        <i class="fas fa-arrow-left me-2"></i> Quay lại
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <form asp-action="Profile" method="post">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <!-- Thông tin cơ bản -->
+                            <div class="profile-info">
+                                <h5 class="mb-3">
+                                    <i class="fas fa-info-circle text-primary me-2"></i>
+                                    Thông tin cơ bản
+                                </h5>
+                                
+                                <div class="info-row">
+                                    <div class="info-label">
+                                        <i class="fas fa-envelope info-icon text-primary"></i>
+                                        Email:
+                                    </div>
+                                    <div class="info-value">
+                                        @Model.Email
+                                        @if (Model.EmailConfirmed)
+                                        {
+                                            <span class="badge bg-success ms-2">
+                                                <i class="fas fa-check-circle me-1"></i> Đã xác nhận
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning ms-2">
+                                                <i class="fas fa-exclamation-triangle me-1"></i> Chưa xác nhận
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="info-row">
+                                    <div class="info-label">
+                                        <i class="fas fa-user info-icon text-success"></i>
+                                        Tên người dùng:
+                                    </div>
+                                    <div class="info-value">
+                                        <input asp-for="UserName" class="form-control form-control-custom" />
+                                        <span asp-validation-for="UserName" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="info-row">
+                                    <div class="info-label">
+                                        <i class="fas fa-phone info-icon text-info"></i>
+                                        Số điện thoại:
+                                    </div>
+                                    <div class="info-value">
+                                        <input asp-for="PhoneNumber" class="form-control form-control-custom" placeholder="Nhập số điện thoại" />
+                                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="info-row">
+                                    <div class="info-label">
+                                        <i class="fas fa-shield-alt info-icon text-warning"></i>
+                                        Vai trò:
+                                    </div>
+                                    <div class="info-value">
+                                        @foreach (var role in Model.Roles)
+                                        {
+                                            var roleClass = role switch
+                                            {
+                                                "Admin" => "role-admin",
+                                                "Teacher" => "role-teacher",
+                                                "Student" => "role-student",
+                                                _ => "role-student"
+                                            };
+                                            <span class="role-badge @roleClass">
+                                                <i class="fas fa-user-tag me-1"></i>
+                                                @role
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="info-row">
+                                    <div class="info-label">
+                                        <i class="fas fa-lock info-icon text-secondary"></i>
+                                        Trạng thái tài khoản:
+                                    </div>
+                                    <div class="info-value">
+                                        @if (Model.LockoutEnd.HasValue && Model.LockoutEnd > DateTimeOffset.Now)
+                                        {
+                                            <span class="status-indicator status-locked"></span>
+                                            <span class="text-danger">Tài khoản bị khóa</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-indicator status-active"></span>
+                                            <span class="text-success">Tài khoản hoạt động</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Nút cập nhật -->
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary btn-custom me-3">
+                                    <i class="fas fa-save me-2"></i> Cập nhật thông tin
+                                </button>
+                                <a asp-action="Settings" class="btn btn-info btn-custom">
+                                    <i class="fas fa-cog me-2"></i> Cài đặt tài khoản
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <!-- Thông tin bổ sung -->
+                            <div class="card">
+                                <div class="card-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-chart-bar me-2"></i> Thống kê
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-center mb-3">
+                                        <div class="avatar-placeholder" style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                                            <i class="fas fa-user fa-2x text-white"></i>
+                                        </div>
+                                        <h6>@Model.UserName</h6>
+                                        <small class="text-muted">@Model.Email</small>
+                                    </div>
+
+                                    <div class="row text-center">
+                                        <div class="col-6">
+                                            <div class="border-end">
+                                                <h5 class="text-primary">@Model.Roles.Count</h5>
+                                                <small class="text-muted">Vai trò</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <h5 class="text-success">@(Model.EmailConfirmed ? "Đã xác nhận" : "Chưa xác nhận")</h5>
+                                            <small class="text-muted">Email</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hướng dẫn -->
+                            <div class="card mt-3">
+                                <div class="card-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-lightbulb me-2"></i> Hướng dẫn
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <i class="fas fa-check-circle text-success me-2"></i>
+                                            Cập nhật thông tin cá nhân
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fas fa-check-circle text-success me-2"></i>
+                                            Thay đổi mật khẩu
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fas fa-check-circle text-success me-2"></i>
+                                            Quản lý bảo mật
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

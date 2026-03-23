@@ -1,0 +1,705 @@
+@model QuanLyHoatDongNgoaiKhoa.Models.HoatDong
+
+@{
+    ViewData["Title"] = "Chi tiết hoạt động";
+}
+
+<style>
+    /* Tùy chỉnh màu chữ cho các badge trạng thái */
+    .badge-warning {
+        background-color: #ffc107 !important;
+        color: #000 !important;
+        font-weight: 600;
+    }
+    
+    .badge-success {
+        background-color: #28a745 !important;
+        color: #fff !important;
+        font-weight: 600;
+    }
+    
+    .badge-secondary {
+        background-color: #6c757d !important;
+        color: #fff !important;
+        font-weight: 600;
+    }
+    
+    .badge-danger {
+        background-color: #dc3545 !important;
+        color: #fff !important;
+        font-weight: 600;
+    }
+    
+    .badge-info {
+        background-color: #17a2b8 !important;
+        color: #fff !important;
+        font-weight: 600;
+    }
+    
+    /* Tùy chỉnh cho badge trạng thái đăng ký */
+    .alert-info .badge {
+        font-size: 1.2em !important;
+        padding: 10px !important;
+        font-weight: 600;
+    }
+
+    /* Cải thiện giao diện card */
+    .activity-card {
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: none;
+        margin-bottom: 20px;
+    }
+
+    .activity-card .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px 15px 0 0 !important;
+        border: none;
+        padding: 20px;
+    }
+
+    .info-card {
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border: none;
+        margin-bottom: 15px;
+    }
+
+    .info-card .card-header {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        border-radius: 10px 10px 0 0 !important;
+        border: none;
+        padding: 15px;
+    }
+
+    .stats-card {
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border: none;
+        margin-bottom: 15px;
+    }
+
+    .stats-card .card-header {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        border-radius: 10px 10px 0 0 !important;
+        border: none;
+        padding: 15px;
+    }
+
+    .info-box {
+        text-align: center;
+        padding: 15px;
+        border-radius: 8px;
+        background: #f8f9fa;
+        margin-bottom: 10px;
+    }
+
+    .info-box-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 10px;
+        font-size: 24px;
+    }
+
+    .info-box-content {
+        padding: 10px 0;
+    }
+
+    .info-box-text {
+        font-size: 14px;
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .info-box-number {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .activity-info {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .activity-info h4 {
+        color: #333;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 10px;
+    }
+
+    .info-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+        padding: 8px 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #495057;
+        min-width: 150px;
+        display: flex;
+        align-items: center;
+    }
+
+    .info-value {
+        color: #333;
+        flex: 1;
+    }
+
+    .info-icon {
+        margin-right: 8px;
+        width: 20px;
+        text-align: center;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    .btn-custom {
+        border-radius: 25px;
+        padding: 10px 25px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .registration-status {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    .table-custom {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-custom thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .table-custom th {
+        border: none;
+        padding: 15px;
+        font-weight: 600;
+    }
+
+    .table-custom td {
+        padding: 12px 15px;
+        vertical-align: middle;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #6c757d;
+    }
+
+    .empty-state i {
+        font-size: 48px;
+        margin-bottom: 15px;
+        color: #dee2e6;
+    }
+</style>
+
+@{
+    // Add anti-forgery token for JavaScript
+    var token = Html.AntiForgeryToken();
+}
+
+<div class="container-fluid">
+    <!-- Hiển thị thông báo -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="card activity-card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-info-circle me-2"></i> Chi tiết hoạt động: @Model.TieuDe
+                        </h3>
+                        <div class="action-buttons">
+                            <a asp-action="Index" class="btn btn-light btn-custom">
+                                <i class="fas fa-arrow-left me-2"></i> Quay lại danh sách
+                            </a>
+                            @{
+                                var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                                var canEdit = User.IsInRole("Admin") || 
+                                             (User.IsInRole("Teacher") && Model.NguoiTaoId == currentUserId);
+                                var isStudent = User.IsInRole("Student");
+                                var isFutureActivity = Model.ThoiGianBatDau > DateTime.Now;
+                                var isConfirmedActivity = Model.MaTrangThai == 2; // 2 = Đã xác nhận
+                                var userRegistration = Model.DanhSachDangKy?.FirstOrDefault(dk => dk.UserId == currentUserId);
+                                var canRegister = isStudent && isFutureActivity && isConfirmedActivity && userRegistration == null;
+                            }
+                            @if (canEdit)
+                            {
+                                <a asp-action="Edit" asp-route-id="@Model.MaHoatDong" class="btn btn-warning btn-custom">
+                                    <i class="fas fa-edit me-2"></i> Chỉnh sửa
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <!-- Thông tin cơ bản -->
+                            <div class="card info-card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-file-alt me-2"></i> Thông tin cơ bản</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="activity-info">
+                                        <div class="info-row">
+                                            <div class="info-label">
+                                                <i class="fas fa-hashtag info-icon text-primary"></i>
+                                                Mã hoạt động:
+                                            </div>
+                                            <div class="info-value">@Model.MaHoatDong</div>
+                                        </div>
+                                        <div class="info-row">
+                                            <div class="info-label">
+                                                <i class="fas fa-heading info-icon text-success"></i>
+                                                Tiêu đề:
+                                            </div>
+                                            <div class="info-value">@Model.TieuDe</div>
+                                        </div>
+                                        <div class="info-row">
+                                            <div class="info-label">
+                                                <i class="fas fa-align-left info-icon text-info"></i>
+                                                Mô tả:
+                                            </div>
+                                            <div class="info-value">@(string.IsNullOrEmpty(Model.MoTa) ? "Không có mô tả" : Model.MoTa)</div>
+                                        </div>
+                                        <div class="info-row">
+                                            <div class="info-label">
+                                                <i class="fas fa-tag info-icon text-warning"></i>
+                                                Trạng thái:
+                                            </div>
+                                            <div class="info-value">
+                                                @{
+                                                    var statusClass = Model.TrangThaiHoatDong?.TenTrangThai switch
+                                                    {
+                                                        "Chuẩn bị" => "badge-warning",
+                                                        "Đang diễn ra" => "badge-success",
+                                                        "Đã kết thúc" => "badge-secondary",
+                                                        "Đã hủy" => "badge-danger",
+                                                        _ => "badge-info"
+                                                    };
+                                                }
+                                                <span class="badge @statusClass">
+                                                    @Model.TrangThaiHoatDong?.TenTrangThai
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="info-row">
+                                            <div class="info-label">
+                                                <i class="fas fa-calendar-plus info-icon text-info"></i>
+                                                Thời gian bắt đầu:
+                                            </div>
+                                            <div class="info-value">@Model.ThoiGianBatDau.ToString("dd/MM/yyyy HH:mm")</div>
+                                        </div>
+                                        <div class="info-row">
+                                            <div class="info-label">
+                                                <i class="fas fa-calendar-minus info-icon text-secondary"></i>
+                                                Thời gian kết thúc:
+                                            </div>
+                                            <div class="info-value">@Model.ThoiGianKetThuc.ToString("dd/MM/yyyy HH:mm")</div>
+                                        </div>
+                                        <div class="info-row">
+                                            <div class="info-label">
+                                                <i class="fas fa-user info-icon text-primary"></i>
+                                                Người tạo:
+                                            </div>
+                                            <div class="info-value">@(Model.NguoiTao?.UserName ?? Model.NguoiTaoId)</div>
+                                        </div>
+                                        <div class="info-row">
+                                            <div class="info-label">
+                                                <i class="fas fa-clock info-icon text-muted"></i>
+                                                Ngày tạo:
+                                            </div>
+                                            <div class="info-value">@Model.NgayTao.ToString("dd/MM/yyyy HH:mm")</div>
+                                        </div>
+                                        <div class="info-row">
+                                            <div class="info-label">
+                                                <i class="fas fa-money-bill-wave info-icon text-success"></i>
+                                                Chi phí:
+                                            </div>
+                                            <div class="info-value">
+                                                <span class="badge bg-success" style="font-size: 1rem; padding: 8px 12px;">
+                                                    <i class="fas fa-coins me-2"></i>
+                                                    @Model.ChiPhi.ToString("N0") VNĐ
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Trạng thái đăng ký cho học sinh -->
+                                    @if (isStudent)
+                                    {
+                                        <div class="registration-status">
+                                            @if (canRegister)
+                                            {
+                                                <h5><i class="fas fa-check-circle me-2"></i> Bạn có thể đăng ký tham gia hoạt động này!</h5>
+                                                <div class="alert alert-info mt-3 mb-3" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3);">
+                                                    <i class="fas fa-info-circle me-2"></i>
+                                                    <strong>Chi phí tham gia:</strong> @Model.ChiPhi.ToString("N0") VNĐ
+                                                </div>
+                                                <button type="button" 
+                                                        class="btn btn-light btn-custom mt-3" 
+                                                        onclick="registerActivity(@Model.MaHoatDong)">
+                                                    <i class="fas fa-user-plus me-2"></i> Đăng ký tham gia ngay
+                                                </button>
+                                            }
+                                            else if (userRegistration != null)
+                                            {
+                                                <h5><i class="fas fa-info-circle me-2"></i> Trạng thái đăng ký của bạn:</h5>
+                                                var registrationStatusClass = userRegistration.TrangThaiDangKy?.TenTrangThaiDangKy switch
+                                                {
+                                                    "Chờ xác nhận" => "badge-warning",
+                                                    "Đã xác nhận" => "badge-success",
+                                                    "Đã từ chối" => "badge-danger",
+                                                    _ => "badge-secondary"
+                                                };
+                                                <span class="badge @registrationStatusClass" style="font-size: 1.2em; padding: 10px;">
+                                                    <i class="fas fa-user-check me-2"></i> @userRegistration.TrangThaiDangKy?.TenTrangThaiDangKy
+                                                </span>
+                                                @if (userRegistration.MaTrangThaiDangKy == 1) // Chờ xác nhận
+                                                {
+                                                    <br><br>
+                                                    <a href="/DangKyThamGia/Delete/@userRegistration.MaDangKy" 
+                                                       class="btn btn-danger btn-custom"
+                                                       onclick="return confirm('Bạn có chắc chắn muốn hủy đăng ký?')">
+                                                        <i class="fas fa-user-minus me-2"></i> Hủy đăng ký
+                                                    </a>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <h5><i class="fas fa-exclamation-triangle me-2"></i> Không thể đăng ký</h5>
+                                                @if (!isFutureActivity)
+                                                {
+                                                    <p>Hoạt động đã diễn ra hoặc kết thúc.</p>
+                                                }
+                                                else if (!isConfirmedActivity)
+                                                {
+                                                    <p>Hoạt động chưa được xác nhận bởi quản trị viên.</p>
+                                                }
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <!-- Thống kê đăng ký -->
+                            <div class="card stats-card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-users me-2"></i> Thống kê đăng ký</h5>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Thông tin chi phí -->
+                                    <div class="row mb-3">
+                                        <div class="col-12">
+                                            <div class="info-box" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white;">
+                                                <span class="info-box-icon" style="background: rgba(255,255,255,0.2); color: white;">
+                                                    <i class="fas fa-money-bill-wave"></i>
+                                                </span>
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text" style="color: rgba(255,255,255,0.9);">Chi phí tham gia</span>
+                                                    <span class="info-box-number" style="color: white;">@Model.ChiPhi.ToString("N0") VNĐ</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="info-box">
+                                                <span class="info-box-icon bg-primary">
+                                                    <i class="fas fa-user-plus"></i>
+                                                </span>
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text">Tổng đăng ký</span>
+                                                    <span class="info-box-number">@(Model.DanhSachDangKy?.Count ?? 0)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="info-box">
+                                                <span class="info-box-icon bg-success">
+                                                    <i class="fas fa-check-circle"></i>
+                                                </span>
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text">Đã xác nhận</span>
+                                                    <span class="info-box-number">
+                                                        @(Model.DanhSachDangKy?.Count(d => d.MaTrangThaiDangKy == 2) ?? 0)
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="info-box">
+                                                <span class="info-box-icon bg-warning">
+                                                    <i class="fas fa-clock"></i>
+                                                </span>
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text">Chờ xác nhận</span>
+                                                    <span class="info-box-number">
+                                                        @(Model.DanhSachDangKy?.Count(d => d.MaTrangThaiDangKy == 1) ?? 0)
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="info-box">
+                                                <span class="info-box-icon bg-danger">
+                                                    <i class="fas fa-times-circle"></i>
+                                                </span>
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text">Từ chối</span>
+                                                    <span class="info-box-number">
+                                                        @(Model.DanhSachDangKy?.Count(d => d.MaTrangThaiDangKy == 3) ?? 0)
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Teacher"))
+                                        {
+                                            <div class="col-12 mt-3">
+                                                <div class="info-box" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); color: white;">
+                                                    <span class="info-box-icon" style="background: rgba(255,255,255,0.2); color: white;">
+                                                        <i class="fas fa-calculator"></i>
+                                                    </span>
+                                                    <div class="info-box-content">
+                                                        <span class="info-box-text" style="color: rgba(255,255,255,0.9);">Tổng thu chi phí</span>
+                                                        <span class="info-box-number" style="color: white;">
+                                                            @((Model.ChiPhi * (Model.DanhSachDangKy?.Count(d => d.MaTrangThaiDangKy == 2) ?? 0)).ToString("N0")) VNĐ
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Danh sách người đăng ký -->
+                    @if (Model.DanhSachDangKy?.Any() == true)
+                    {
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card info-card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0"><i class="fas fa-list me-2"></i> Danh sách người đăng ký</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-custom">
+                                                <thead>
+                                                    <tr>
+                                                        <th>STT</th>
+                                                        <th>Họ tên</th>
+                                                        <th>Email</th>
+                                                        <th>Ngày đăng ký</th>
+                                                        <th>Trạng thái</th>
+                                                        @if (User.IsInRole("Admin") || User.IsInRole("Teacher"))
+                                                        {
+                                                            <th>Chi phí</th>
+                                                        }
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var dangKy in Model.DanhSachDangKy.OrderBy(d => d.NgayDangKy))
+                                                    {
+                                                        <tr>
+                                                            <td>@(Model.DanhSachDangKy.ToList().IndexOf(dangKy) + 1)</td>
+                                                            <td>@(dangKy.User?.UserName ?? dangKy.UserId)</td>
+                                                            <td>@(dangKy.User?.Email ?? dangKy.UserId)</td>
+                                                            <td>@dangKy.NgayDangKy.ToString("dd/MM/yyyy HH:mm")</td>
+                                                            <td>
+                                                                @{
+                                                                    var trangThaiClass = dangKy.TrangThaiDangKy?.TenTrangThaiDangKy switch
+                                                                    {
+                                                                        "Chờ xác nhận" => "badge-warning",
+                                                                        "Đã xác nhận" => "badge-success",
+                                                                        "Từ chối" => "badge-danger",
+                                                                        _ => "badge-secondary"
+                                                                    };
+                                                                }
+                                                                <span class="badge @trangThaiClass">
+                                                                    @dangKy.TrangThaiDangKy?.TenTrangThaiDangKy
+                                                                </span>
+                                                            </td>
+                                                            @if (User.IsInRole("Admin") || User.IsInRole("Teacher"))
+                                                            {
+                                                                <td>
+                                                                    <span class="badge bg-success">
+                                                                        <i class="fas fa-coins me-1"></i>
+                                                                        @Model.ChiPhi.ToString("N0") VNĐ
+                                                                    </span>
+                                                                </td>
+                                                            }
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card info-card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0"><i class="fas fa-list me-2"></i> Danh sách người đăng ký</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="empty-state">
+                                            <i class="fas fa-users"></i>
+                                            <h5>Chưa có người đăng ký</h5>
+                                            <p>Hoạt động này chưa có người nào đăng ký tham gia.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function registerActivity(maHoatDong) {
+    // Lấy button và disable
+    const button = event.target.closest('button');
+    const originalText = button.innerHTML;
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Đang đăng ký...';
+    
+    // Gọi API
+    fetch('/api/dangky/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            maHoatDong: maHoatDong,
+            ghiChu: ''
+        })
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            showToast('success', result.message);
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        } else {
+            showToast('error', result.message || 'Có lỗi xảy ra khi đăng ký');
+            button.disabled = false;
+            button.innerHTML = originalText;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('error', 'Có lỗi xảy ra khi kết nối đến máy chủ');
+        button.disabled = false;
+        button.innerHTML = originalText;
+    });
+}
+
+function showToast(type, message) {
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#28a745' : '#dc3545'};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 5px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 9999;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        font-family: 'VT323', monospace;
+        font-size: 1rem;
+        max-width: 400px;
+        word-wrap: break-word;
+    `;
+    toast.textContent = message;
+    
+    // Add to page
+    document.body.appendChild(toast);
+    
+    // Animate in
+    setTimeout(() => {
+        toast.style.transform = 'translateX(0)';
+    }, 10);
+    
+    // Remove after 5 seconds
+    setTimeout(() => {
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    }, 5000);
+}
+</script> 

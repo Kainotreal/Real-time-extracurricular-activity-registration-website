@@ -1,0 +1,377 @@
+@model QuanLyHoatDongNgoaiKhoa.Controllers.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Đăng ký";
+}
+
+<style>
+    .register-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .register-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        max-width: 450px;
+        width: 100%;
+    }
+
+    .register-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .register-body {
+        padding: 40px 30px;
+    }
+
+    .form-control-custom {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        padding: 15px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control-custom:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .btn-register {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 15px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .btn-register:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .password-strength {
+        margin-top: 10px;
+    }
+
+    .strength-bar {
+        height: 5px;
+        border-radius: 3px;
+        background: #e9ecef;
+        overflow: hidden;
+    }
+
+    .strength-fill {
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .strength-weak {
+        background: #dc3545;
+        width: 25%;
+    }
+
+    .strength-medium {
+        background: #ffc107;
+        width: 50%;
+    }
+
+    .strength-strong {
+        background: #28a745;
+        width: 75%;
+    }
+
+    .strength-very-strong {
+        background: #20c997;
+        width: 100%;
+    }
+
+    .requirements {
+        margin-top: 15px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+    }
+
+    .requirement-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+
+    .requirement-item i {
+        margin-right: 8px;
+        width: 16px;
+    }
+
+    .requirement-met {
+        color: #28a745;
+    }
+
+    .requirement-unmet {
+        color: #6c757d;
+    }
+
+    .divider {
+        text-align: center;
+        margin: 20px 0;
+        position: relative;
+    }
+
+    .divider::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: #e9ecef;
+    }
+
+    .divider span {
+        background: white;
+        padding: 0 15px;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .social-login {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn-social {
+        flex: 1;
+        border-radius: 10px;
+        padding: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .btn-google {
+        background: #db4437;
+        color: white;
+    }
+
+    .btn-facebook {
+        background: #4267B2;
+        color: white;
+    }
+
+    .btn-social:hover {
+        transform: translateY(-2px);
+        color: white;
+        text-decoration: none;
+    }
+</style>
+
+<div class="register-container">
+    <div class="register-card">
+        <div class="register-header">
+            <h3 class="mb-0">
+                <i class="fas fa-user-plus me-2"></i> Đăng ký
+            </h3>
+            <p class="mb-0 mt-2">Tạo tài khoản mới</p>
+        </div>
+        
+        <div class="register-body">
+            <form asp-action="Register" method="post">
+                <input type="hidden" name="ReturnUrl" value="@ViewData["ReturnUrl"]" />
+                
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-envelope me-2"></i>Email
+                    </label>
+                    <input asp-for="Email" class="form-control form-control-custom" placeholder="Nhập email của bạn" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-lock me-2"></i>Mật khẩu
+                    </label>
+                    <input asp-for="Password" id="password" class="form-control form-control-custom" placeholder="Nhập mật khẩu" />
+                    <div class="password-strength">
+                        <div class="strength-bar">
+                            <div class="strength-fill" id="strengthFill"></div>
+                        </div>
+                        <small class="text-muted" id="strengthText">Nhập mật khẩu để kiểm tra độ mạnh</small>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-check-circle me-2"></i>Xác nhận mật khẩu
+                    </label>
+                    <input asp-for="ConfirmPassword" id="confirmPassword" class="form-control form-control-custom" placeholder="Nhập lại mật khẩu" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+
+                <!-- Yêu cầu mật khẩu -->
+                <div class="requirements">
+                    <h6 class="mb-2">
+                        <i class="fas fa-shield-alt me-2"></i>Yêu cầu mật khẩu
+                    </h6>
+                    <div class="requirement-item" id="req-length">
+                        <i class="fas fa-circle requirement-unmet"></i>
+                        <span>Ít nhất 6 ký tự</span>
+                    </div>
+                    <div class="requirement-item" id="req-uppercase">
+                        <i class="fas fa-circle requirement-unmet"></i>
+                        <span>Có chữ hoa</span>
+                    </div>
+                    <div class="requirement-item" id="req-lowercase">
+                        <i class="fas fa-circle requirement-unmet"></i>
+                        <span>Có chữ thường</span>
+                    </div>
+                    <div class="requirement-item" id="req-number">
+                        <i class="fas fa-circle requirement-unmet"></i>
+                        <span>Có số</span>
+                    </div>
+                    <div class="requirement-item" id="req-special">
+                        <i class="fas fa-circle requirement-unmet"></i>
+                        <span>Có ký tự đặc biệt</span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary btn-register">
+                        <i class="fas fa-user-plus me-2"></i> Đăng ký
+                    </button>
+                </div>
+
+                <div class="text-center">
+                    <small class="text-muted">
+                        Đã có tài khoản? 
+                        <a asp-action="Login" class="text-decoration-none">
+                            <strong>Đăng nhập ngay</strong>
+                        </a>
+                    </small>
+                </div>
+            </form>
+
+            <div class="divider">
+                <span>hoặc</span>
+            </div>
+
+            <div class="social-login">
+                <a href="#" class="btn btn-social btn-google">
+                    <i class="fab fa-google me-2"></i> Google
+                </a>
+                <a href="#" class="btn btn-social btn-facebook">
+                    <i class="fab fa-facebook-f me-2"></i> Facebook
+                </a>
+            </div>
+
+            <div class="text-center mt-3">
+                <small class="text-muted">
+                    Bằng cách đăng ký, bạn đồng ý với 
+                    <a href="#" class="text-decoration-none">Điều khoản sử dụng</a>
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Kiểm tra độ mạnh mật khẩu và yêu cầu
+document.getElementById('password').addEventListener('input', function() {
+    const password = this.value;
+    const strengthFill = document.getElementById('strengthFill');
+    const strengthText = document.getElementById('strengthText');
+    
+    let strength = 0;
+    let feedback = '';
+    
+    // Kiểm tra các yêu cầu
+    const hasLength = password.length >= 6;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[^A-Za-z0-9]/.test(password);
+    
+    // Cập nhật giao diện yêu cầu
+    updateRequirement('req-length', hasLength);
+    updateRequirement('req-uppercase', hasUppercase);
+    updateRequirement('req-lowercase', hasLowercase);
+    updateRequirement('req-number', hasNumber);
+    updateRequirement('req-special', hasSpecial);
+    
+    // Tính độ mạnh
+    if (hasLength) strength += 1;
+    if (hasUppercase) strength += 1;
+    if (hasLowercase) strength += 1;
+    if (hasNumber) strength += 1;
+    if (hasSpecial) strength += 1;
+    if (password.length >= 12) strength += 1;
+    
+    // Cập nhật giao diện độ mạnh
+    strengthFill.className = 'strength-fill';
+    
+    if (strength <= 2) {
+        strengthFill.classList.add('strength-weak');
+        feedback = 'Mật khẩu yếu';
+    } else if (strength <= 3) {
+        strengthFill.classList.add('strength-medium');
+        feedback = 'Mật khẩu trung bình';
+    } else if (strength <= 4) {
+        strengthFill.classList.add('strength-strong');
+        feedback = 'Mật khẩu mạnh';
+    } else {
+        strengthFill.classList.add('strength-very-strong');
+        feedback = 'Mật khẩu rất mạnh';
+    }
+    
+    strengthText.textContent = feedback;
+});
+
+function updateRequirement(elementId, isMet) {
+    const element = document.getElementById(elementId);
+    const icon = element.querySelector('i');
+    const text = element.querySelector('span');
+    
+    if (isMet) {
+        icon.className = 'fas fa-check-circle requirement-met';
+        text.className = 'requirement-met';
+    } else {
+        icon.className = 'fas fa-circle requirement-unmet';
+        text.className = 'requirement-unmet';
+    }
+}
+
+// Kiểm tra xác nhận mật khẩu
+document.getElementById('confirmPassword').addEventListener('input', function() {
+    const password = document.getElementById('password').value;
+    const confirmPassword = this.value;
+    
+    if (confirmPassword && password !== confirmPassword) {
+        this.setCustomValidity('Mật khẩu xác nhận không khớp');
+    } else {
+        this.setCustomValidity('');
+    }
+});
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

@@ -1,0 +1,446 @@
+@model QuanLyHoatDongNgoaiKhoa.Controllers.SettingsViewModel
+
+@{
+    ViewData["Title"] = "Cài đặt tài khoản";
+}
+
+<style>
+    .settings-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .settings-card {
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: none;
+        margin-bottom: 20px;
+    }
+
+    .settings-card .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px 15px 0 0 !important;
+        border: none;
+        padding: 20px;
+    }
+
+    .security-section {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .btn-custom {
+        border-radius: 25px;
+        padding: 10px 25px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-control-custom {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        padding: 12px 15px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control-custom:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .security-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        background: white;
+    }
+
+    .security-info {
+        display: flex;
+        align-items: center;
+    }
+
+    .security-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        font-size: 1.2rem;
+    }
+
+    .icon-password {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+    }
+
+    .icon-email {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+    }
+
+    .icon-phone {
+        background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        color: white;
+    }
+
+    .icon-2fa {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+    }
+
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .status-enabled {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+    }
+
+    .status-disabled {
+        background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        color: white;
+    }
+
+    .password-strength {
+        margin-top: 10px;
+    }
+
+    .strength-bar {
+        height: 5px;
+        border-radius: 3px;
+        background: #e9ecef;
+        overflow: hidden;
+    }
+
+    .strength-fill {
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .strength-weak {
+        background: #dc3545;
+        width: 25%;
+    }
+
+    .strength-medium {
+        background: #ffc107;
+        width: 50%;
+    }
+
+    .strength-strong {
+        background: #28a745;
+        width: 75%;
+    }
+
+    .strength-very-strong {
+        background: #20c997;
+        width: 100%;
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- Hiển thị thông báo -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="settings-container">
+        <div class="card settings-card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-cog me-2"></i> Cài đặt tài khoản
+                    </h3>
+                    <a asp-action="Profile" class="btn btn-light btn-custom">
+                        <i class="fas fa-arrow-left me-2"></i> Quay lại hồ sơ
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <!-- Thay đổi mật khẩu -->
+                        <div class="security-section">
+                            <h5 class="mb-3">
+                                <i class="fas fa-lock text-primary me-2"></i>
+                                Thay đổi mật khẩu
+                            </h5>
+                            
+                            <form asp-action="ChangePassword" method="post">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">
+                                                <i class="fas fa-key me-2"></i>Mật khẩu hiện tại
+                                            </label>
+                                            <input type="password" name="CurrentPassword" class="form-control form-control-custom" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">
+                                                <i class="fas fa-lock me-2"></i>Mật khẩu mới
+                                            </label>
+                                            <input type="password" name="NewPassword" id="newPassword" class="form-control form-control-custom" required />
+                                            <div class="password-strength">
+                                                <div class="strength-bar">
+                                                    <div class="strength-fill" id="strengthFill"></div>
+                                                </div>
+                                                <small class="text-muted" id="strengthText">Nhập mật khẩu để kiểm tra độ mạnh</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">
+                                                <i class="fas fa-check-circle me-2"></i>Xác nhận mật khẩu mới
+                                            </label>
+                                            <input type="password" name="ConfirmPassword" class="form-control form-control-custom" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">&nbsp;</label>
+                                            <button type="submit" class="btn btn-primary btn-custom w-100">
+                                                <i class="fas fa-save me-2"></i> Thay đổi mật khẩu
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Thông tin bảo mật -->
+                        <div class="security-section">
+                            <h5 class="mb-3">
+                                <i class="fas fa-shield-alt text-success me-2"></i>
+                                Thông tin bảo mật
+                            </h5>
+
+                            <div class="security-item">
+                                <div class="security-info">
+                                    <div class="security-icon icon-password">
+                                        <i class="fas fa-key"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Mật khẩu</h6>
+                                        <small class="text-muted">
+                                            @if (Model.HasPassword)
+                                            {
+                                                <span class="text-success">Đã thiết lập</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-warning">Chưa thiết lập</span>
+                                            }
+                                        </small>
+                                    </div>
+                                </div>
+                                <span class="status-badge @(Model.HasPassword ? "status-enabled" : "status-disabled")">
+                                    @(Model.HasPassword ? "Bảo mật" : "Không bảo mật")
+                                </span>
+                            </div>
+
+                            <div class="security-item">
+                                <div class="security-info">
+                                    <div class="security-icon icon-email">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Email</h6>
+                                        <small class="text-muted">@Model.Email</small>
+                                    </div>
+                                </div>
+                                <span class="status-badge status-enabled">
+                                    Đã xác nhận
+                                </span>
+                            </div>
+
+                            <div class="security-item">
+                                <div class="security-info">
+                                    <div class="security-icon icon-phone">
+                                        <i class="fas fa-phone"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Số điện thoại</h6>
+                                        <small class="text-muted">
+                                            @(string.IsNullOrEmpty(Model.PhoneNumber) ? "Chưa thiết lập" : Model.PhoneNumber)
+                                        </small>
+                                    </div>
+                                </div>
+                                <span class="status-badge @(string.IsNullOrEmpty(Model.PhoneNumber) ? "status-disabled" : "status-enabled")">
+                                    @(string.IsNullOrEmpty(Model.PhoneNumber) ? "Chưa thiết lập" : "Đã thiết lập")
+                                </span>
+                            </div>
+
+                            <div class="security-item">
+                                <div class="security-info">
+                                    <div class="security-icon icon-2fa">
+                                        <i class="fas fa-mobile-alt"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Xác thực 2 yếu tố</h6>
+                                        <small class="text-muted">Bảo mật tài khoản bằng mã xác thực</small>
+                                    </div>
+                                </div>
+                                <span class="status-badge @(Model.TwoFactorEnabled ? "status-enabled" : "status-disabled")">
+                                    @(Model.TwoFactorEnabled ? "Đã bật" : "Chưa bật")
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <!-- Hướng dẫn bảo mật -->
+                        <div class="card">
+                            <div class="card-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-lightbulb me-2"></i> Hướng dẫn bảo mật
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled">
+                                    <li class="mb-3">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        <strong>Sử dụng mật khẩu mạnh:</strong>
+                                        <br><small class="text-muted">Kết hợp chữ hoa, chữ thường, số và ký tự đặc biệt</small>
+                                    </li>
+                                    <li class="mb-3">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        <strong>Không chia sẻ mật khẩu:</strong>
+                                        <br><small class="text-muted">Bảo mật thông tin đăng nhập của bạn</small>
+                                    </li>
+                                    <li class="mb-3">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        <strong>Đăng xuất khi không sử dụng:</strong>
+                                        <br><small class="text-muted">Đặc biệt khi sử dụng thiết bị công cộng</small>
+                                    </li>
+                                    <li class="mb-3">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        <strong>Thay đổi mật khẩu định kỳ:</strong>
+                                        <br><small class="text-muted">Cập nhật mật khẩu 3-6 tháng một lần</small>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Thống kê đăng nhập -->
+                        <div class="card mt-3">
+                            <div class="card-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-chart-line me-2"></i> Thống kê đăng nhập
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center mb-3">
+                                    <h4 class="text-primary">@Model.Logins.Count</h4>
+                                    <small class="text-muted">Tài khoản liên kết</small>
+                                </div>
+                                
+                                @if (Model.Logins.Any())
+                                {
+                                    <div class="mb-3">
+                                        <small class="text-muted">Các tài khoản đã liên kết:</small>
+                                        <ul class="list-unstyled mt-2">
+                                            @foreach (var login in Model.Logins)
+                                            {
+                                                <li class="mb-1">
+                                                    <i class="fas fa-link text-info me-2"></i>
+                                                    <small>@login.LoginProvider</small>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-center">
+                                        <i class="fas fa-info-circle text-muted mb-2"></i>
+                                        <small class="text-muted">Chưa có tài khoản nào được liên kết</small>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Kiểm tra độ mạnh mật khẩu
+document.getElementById('newPassword').addEventListener('input', function() {
+    const password = this.value;
+    const strengthFill = document.getElementById('strengthFill');
+    const strengthText = document.getElementById('strengthText');
+    
+    let strength = 0;
+    let feedback = '';
+    
+    // Kiểm tra độ dài
+    if (password.length >= 8) strength += 1;
+    if (password.length >= 12) strength += 1;
+    
+    // Kiểm tra ký tự đặc biệt
+    if (/[A-Z]/.test(password)) strength += 1;
+    if (/[a-z]/.test(password)) strength += 1;
+    if (/[0-9]/.test(password)) strength += 1;
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+    
+    // Cập nhật giao diện
+    strengthFill.className = 'strength-fill';
+    
+    if (strength <= 2) {
+        strengthFill.classList.add('strength-weak');
+        feedback = 'Mật khẩu yếu';
+    } else if (strength <= 3) {
+        strengthFill.classList.add('strength-medium');
+        feedback = 'Mật khẩu trung bình';
+    } else if (strength <= 4) {
+        strengthFill.classList.add('strength-strong');
+        feedback = 'Mật khẩu mạnh';
+    } else {
+        strengthFill.classList.add('strength-very-strong');
+        feedback = 'Mật khẩu rất mạnh';
+    }
+    
+    strengthText.textContent = feedback;
+});
+</script> 

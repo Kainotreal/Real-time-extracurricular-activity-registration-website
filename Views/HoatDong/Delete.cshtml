@@ -1,0 +1,226 @@
+@model QuanLyHoatDongNgoaiKhoa.Models.HoatDong
+
+@{
+    ViewData["Title"] = "Xóa hoạt động";
+}
+
+<style>
+    /* Import font pixel hỗ trợ tiếng Việt */
+    @@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    @@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+    @@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+    @@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+    /* Font pixel chính cho tiếng Việt */
+    :root {
+        --pixel-font: 'VT323', 'Press Start 2P', 'Share Tech Mono', monospace;
+        --pixel-font-small: 'VT323', monospace;
+        --pixel-font-heading: 'Orbitron', sans-serif;
+        --pixel-font-retro: 'Press Start 2P', cursive;
+    }
+
+    /* Áp dụng font pixel cho trang Delete */
+    .card-title {
+        font-family: var(--pixel-font-heading);
+        font-size: 20px;
+        letter-spacing: 1px;
+    }
+
+    .alert h4 {
+        font-family: var(--pixel-font-heading);
+        font-size: 18px;
+        letter-spacing: 1px;
+    }
+
+    .alert p {
+        font-family: var(--pixel-font-small);
+        font-size: 16px;
+    }
+
+    .table {
+        font-family: var(--pixel-font-small);
+        font-size: 16px;
+    }
+
+    .table strong {
+        font-family: var(--pixel-font-small);
+        font-weight: 600;
+    }
+
+    .btn {
+        font-family: var(--pixel-font-small);
+        font-size: 16px;
+        letter-spacing: 0.5px;
+    }
+
+    .badge {
+        font-family: var(--pixel-font-small);
+        font-size: 12px;
+        letter-spacing: 0.5px;
+    }
+
+    /* Tùy chỉnh màu chữ cho các badge trạng thái */
+    .badge-warning {
+        background-color: #ffc107 !important;
+        color: #000 !important;
+        font-weight: 600;
+    }
+    
+    .badge-success {
+        background-color: #28a745 !important;
+        color: #fff !important;
+        font-weight: 600;
+    }
+    
+    .badge-secondary {
+        background-color: #6c757d !important;
+        color: #fff !important;
+        font-weight: 600;
+    }
+    
+    .badge-danger {
+        background-color: #dc3545 !important;
+        color: #fff !important;
+        font-weight: 600;
+    }
+    
+    .badge-info {
+        background-color: #17a2b8 !important;
+        color: #fff !important;
+        font-weight: 600;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-exclamation-triangle text-danger"></i> Xác nhận xóa hoạt động
+                    </h3>
+                    <div class="card-tools">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Quay lại danh sách
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Cảnh báo!</h4>
+                        <p>Bạn đang chuẩn bị xóa hoạt động <strong>"@Model.TieuDe"</strong>. Hành động này không thể hoàn tác.</p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-info-circle"></i> Thông tin hoạt động sẽ bị xóa</h5>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td width="150"><strong>Mã hoạt động:</strong></td>
+                                            <td>@Model.MaHoatDong</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Tiêu đề:</strong></td>
+                                            <td>@Model.TieuDe</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Mô tả:</strong></td>
+                                            <td>@Model.MoTa</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Trạng thái:</strong></td>
+                                            <td>
+                                                @{
+                                                    var statusClass = Model.TrangThaiHoatDong?.TenTrangThai switch
+                                                    {
+                                                        "Chuẩn bị" => "badge-warning",
+                                                        "Đang diễn ra" => "badge-success",
+                                                        "Đã kết thúc" => "badge-secondary",
+                                                        "Đã hủy" => "badge-danger",
+                                                        _ => "badge-info"
+                                                    };
+                                                }
+                                                <span class="badge @statusClass">
+                                                    @Model.TrangThaiHoatDong?.TenTrangThai
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Thời gian:</strong></td>
+                                            <td>
+                                                @Model.ThoiGianBatDau.ToString("dd/MM/yyyy HH:mm") - 
+                                                @Model.ThoiGianKetThuc.ToString("dd/MM/yyyy HH:mm")
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Người tạo:</strong></td>
+                                            <td>@(Model.NguoiTao?.UserName ?? Model.NguoiTaoId)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Ngày tạo:</strong></td>
+                                            <td>@Model.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-users"></i> Thống kê đăng ký</h5>
+                                </div>
+                                <div class="card-body text-center">
+                                    <div class="info-box">
+                                        <span class="info-box-icon bg-primary">
+                                            <i class="fas fa-user-plus"></i>
+                                        </span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Tổng đăng ký</span>
+                                            <span class="info-box-number">@(Model.DanhSachDangKy?.Count ?? 0)</span>
+                                        </div>
+                                    </div>
+                                    
+                                    @if (Model.DanhSachDangKy?.Any() == true)
+                                    {
+                                        <div class="alert alert-warning mt-3">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            <strong>Lưu ý:</strong> Hoạt động này đã có @Model.DanhSachDangKy.Count người đăng ký tham gia.
+                                            Việc xóa hoạt động sẽ ảnh hưởng đến tất cả đăng ký này.
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        @if (Model.DanhSachDangKy?.Any() == true)
+                        {
+                            <div class="alert alert-warning">
+                                <h5><i class="fas fa-exclamation-triangle"></i> Cảnh báo!</h5>
+                                <p>Hoạt động này có <strong>@Model.DanhSachDangKy.Count</strong> người đăng ký tham gia. 
+                                Việc xóa hoạt động sẽ xóa tất cả đăng ký này.</p>
+                            </div>
+                        }
+                        
+                        <form asp-action="Delete" method="post">
+                            <input type="hidden" asp-for="MaHoatDong" />
+                            <button type="submit" class="btn btn-danger btn-lg" 
+                                    onclick="return confirm('Bạn có chắc chắn muốn xóa hoạt động này?')">
+                                <i class="fas fa-trash"></i> Xác nhận xóa
+                            </button>
+                        </form>
+                        
+                        <a asp-action="Index" class="btn btn-secondary btn-lg ml-2">
+                            <i class="fas fa-times"></i> Hủy bỏ
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

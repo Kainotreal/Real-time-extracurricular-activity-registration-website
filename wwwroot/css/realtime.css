@@ -1,0 +1,438 @@
+/* Realtime CSS - Hỗ trợ styling cho realtime */
+
+/* Realtime Status Indicator */
+.realtime-status {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    padding: 10px 15px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.realtime-status.connected {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+}
+
+.realtime-status.connecting {
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+    color: white;
+}
+
+.realtime-status.disconnected {
+    background: linear-gradient(135deg, #dc3545, #e83e8c);
+    color: white;
+}
+
+/* Realtime Animation */
+.realtime-pulse {
+    animation: realtimePulse 2s infinite;
+}
+
+@keyframes realtimePulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+    }
+}
+
+/* Realtime Updates */
+.realtime-update {
+    animation: realtimeUpdate 0.5s ease-in-out;
+}
+
+@keyframes realtimeUpdate {
+    0% {
+        background-color: rgba(40, 167, 69, 0.2);
+        transform: scale(1);
+    }
+    50% {
+        background-color: rgba(40, 167, 69, 0.4);
+        transform: scale(1.02);
+    }
+    100% {
+        background-color: transparent;
+        transform: scale(1);
+    }
+}
+
+/* Status Badge Animations */
+.status-badge {
+    transition: all 0.3s ease;
+}
+
+.status-badge.status-1 {
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+    color: white;
+}
+
+.status-badge.status-2 {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+}
+
+.status-badge.status-3 {
+    background: linear-gradient(135deg, #dc3545, #e83e8c);
+    color: white;
+}
+
+/* Realtime Notification */
+.realtime-notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    padding: 15px 25px;
+    border-radius: 10px;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    animation: slideInDown 0.5s ease-out;
+}
+
+@keyframes slideInDown {
+    from {
+        transform: translateX(-50%) translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+.realtime-notification.success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.realtime-notification.error {
+    background: linear-gradient(135deg, #dc3545, #e83e8c);
+}
+
+.realtime-notification.warning {
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+}
+
+.realtime-notification.info {
+    background: linear-gradient(135deg, #17a2b8, #6f42c1);
+}
+
+/* Realtime Counter */
+.realtime-counter {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.realtime-counter.updated {
+    animation: counterUpdate 0.5s ease-in-out;
+}
+
+@keyframes counterUpdate {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+        background-color: rgba(40, 167, 69, 0.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Realtime Button States */
+.btn-realtime {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-realtime::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+}
+
+.btn-realtime:hover::before {
+    left: 100%;
+}
+
+.btn-realtime.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.btn-realtime.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Realtime Table Row */
+.table-row-realtime {
+    transition: all 0.3s ease;
+}
+
+.table-row-realtime.new {
+    animation: rowNew 0.5s ease-out;
+}
+
+.table-row-realtime.updated {
+    animation: rowUpdate 0.5s ease-out;
+}
+
+.table-row-realtime.deleted {
+    animation: rowDelete 0.5s ease-out;
+}
+
+@keyframes rowNew {
+    from {
+        background-color: rgba(40, 167, 69, 0.2);
+        transform: translateX(-20px);
+        opacity: 0;
+    }
+    to {
+        background-color: transparent;
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes rowUpdate {
+    0% {
+        background-color: rgba(255, 193, 7, 0.2);
+    }
+    50% {
+        background-color: rgba(255, 193, 7, 0.4);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
+@keyframes rowDelete {
+    to {
+        background-color: rgba(220, 53, 69, 0.2);
+        transform: translateX(20px);
+        opacity: 0;
+    }
+}
+
+/* Realtime Progress Bar */
+.realtime-progress {
+    height: 4px;
+    background-color: #e9ecef;
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+}
+
+.realtime-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #28a745, #20c997);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+    position: relative;
+}
+
+.realtime-progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: progressShine 2s infinite;
+}
+
+@keyframes progressShine {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Realtime Connection Status */
+.connection-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.connection-status.connected {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.connection-status.connecting {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.connection-status.disconnected {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.connection-status::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: connectionPulse 2s infinite;
+}
+
+.connection-status.connected::before {
+    background-color: #28a745;
+}
+
+.connection-status.connecting::before {
+    background-color: #ffc107;
+}
+
+.connection-status.disconnected::before {
+    background-color: #dc3545;
+}
+
+@keyframes connectionPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Realtime Loading Spinner */
+.realtime-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Realtime Toast */
+.realtime-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    min-width: 300px;
+    padding: 15px 20px;
+    border-radius: 10px;
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    animation: slideInRight 0.5s ease-out;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.realtime-toast.success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.realtime-toast.error {
+    background: linear-gradient(135deg, #dc3545, #e83e8c);
+}
+
+.realtime-toast.warning {
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+}
+
+.realtime-toast.info {
+    background: linear-gradient(135deg, #17a2b8, #6f42c1);
+}
+
+.realtime-toast .close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+
+.realtime-toast .close:hover {
+    opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .realtime-status {
+        top: 10px;
+        right: 10px;
+        font-size: 0.8rem;
+        padding: 8px 12px;
+    }
+    
+    .realtime-notification {
+        left: 10px;
+        right: 10px;
+        transform: none;
+        width: calc(100% - 20px);
+    }
+    
+    .realtime-toast {
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+        width: calc(100% - 20px);
+    }
+} 

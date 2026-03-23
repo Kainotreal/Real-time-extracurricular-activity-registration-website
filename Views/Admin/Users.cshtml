@@ -1,0 +1,412 @@
+@model IEnumerable<QuanLyHoatDongNgoaiKhoa.ViewModels.UserManagementViewModel>
+
+@{
+    ViewData["Title"] = "Quản Lý Người Dùng";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header Section -->
+            <div class="page-header mb-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="header-content">
+                        <h1 class="page-title">
+                            <i class="fas fa-users-cog me-3"></i>Quản Lý Người Dùng
+                        </h1>
+                        <p class="page-subtitle text-muted">Quản lý tài khoản và phân quyền người dùng trong hệ thống</p>
+                    </div>
+                    <div class="header-actions">
+                        <div class="stats-cards">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-number">@Model.Count()</span>
+                                    <span class="stat-label">Tổng người dùng</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Card -->
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-gradient-primary text-white">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list me-2"></i>Danh sách người dùng
+                        </h5>
+                        <div class="header-buttons">
+                            <button class="btn btn-light btn-sm" onclick="refreshTable()">
+                                <i class="fas fa-sync-alt me-1"></i>Làm mới
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Thông báo hướng dẫn -->
+                <div class="alert alert-info m-3" role="alert">
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-info-circle me-2 mt-1"></i>
+                        <div>
+                            <strong>Hướng dẫn quản lý người dùng:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Quản trị viên có thể quản lý tất cả người dùng khác (Student, Teacher)</li>
+                                <li>Quản trị viên <strong>không thể</strong> hạ cấp, khóa hoặc xóa quản trị viên khác</li>
+                                <li>Quản trị viên <strong>không thể</strong> tự hạ cấp chính mình để đảm bảo quyền quản lý</li>
+                                <li>Quản trị viên chỉ có thể chỉnh sửa thông tin cá nhân của chính mình</li>
+                                <li>Để thay đổi quyền Admin, cần liên hệ với quản trị viên cấp cao hơn</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body p-0">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show m-3" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="border-0">
+                                        <i class="fas fa-user me-2"></i>Thông tin người dùng
+                                    </th>
+                                    <th class="border-0">
+                                        <i class="fas fa-tag me-2"></i>Vai trò
+                                    </th>
+                                    <th class="border-0">
+                                        <i class="fas fa-circle me-2"></i>Trạng thái
+                                    </th>
+                                    <th class="border-0 text-center">
+                                        <i class="fas fa-cogs me-2"></i>Thao tác
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in Model)
+                                {
+                                    <tr class="user-row">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="user-avatar me-3">
+                                                    <div class="avatar-circle">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="user-info">
+                                                    <h6 class="mb-1 fw-bold">@user.Email</h6>
+                                                    <small class="text-muted">@user.UserName</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="role-badges">
+                                                @foreach (var role in user.CurrentRoles.Distinct())
+                                                {
+                                                    <span class="badge @GetRoleBadgeClass(role) me-1">
+                                                        <i class="@GetRoleIcon(role) me-1"></i>
+                                                        @GetRoleDisplayName(role)
+                                                    </span>
+                                                }
+                                            </div>
+                                        </td>
+                                        <td>
+                                            @if (user.IsLocked)
+                                            {
+                                                <span class="badge bg-danger">
+                                                    <i class="fas fa-lock me-1"></i>Đã khóa
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-check me-1"></i>Hoạt động
+                                                </span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                @{
+                                                    var isCurrentUser = user.Id == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                                                    var isAdminUser = user.CurrentRoles.Contains("Admin");
+                                                    var currentUserIsAdmin = User.IsInRole("Admin");
+                                                    var canManageUser = !isAdminUser || !currentUserIsAdmin || isCurrentUser;
+                                                }
+                                                
+                                                @if (canManageUser)
+                                                {
+                                                    <a href="/Admin/EditUser/@user.Id" class="btn btn-primary btn-sm me-1" 
+                                                       data-bs-toggle="tooltip" title="Chỉnh sửa">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    
+                                                    @if (user.IsLocked)
+                                                    {
+                                                        <form asp-action="UnlockUser" method="post" style="display: inline;">
+                                                            <input type="hidden" name="id" value="@user.Id" />
+                                                            <button type="submit" class="btn btn-success btn-sm me-1" 
+                                                                    onclick=""
+                                                                    data-bs-toggle="tooltip" title="Mở khóa">
+                                                                <i class="fas fa-unlock"></i>
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                    else
+                                                    {
+                                                        <form asp-action="LockUser" method="post" style="display: inline;">
+                                                            <input type="hidden" name="id" value="@user.Id" />
+                                                            <button type="submit" class="btn btn-warning btn-sm me-1" 
+                                                                    onclick=""
+                                                                    data-bs-toggle="tooltip" title="Khóa tài khoản">
+                                                                <i class="fas fa-lock"></i>
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                    
+                                                    <form asp-action="DeleteUser" method="post" style="display: inline;">
+                                                        <input type="hidden" name="id" value="@user.Id" />
+                                                        <button type="submit" class="btn btn-danger btn-sm" 
+                                                                onclick=""
+                                                                data-bs-toggle="tooltip" title="Xóa tài khoản">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-info">
+                                                        <i class="fas fa-shield-alt me-1"></i>
+                                                        Không thể quản lý Admin khác
+                                                    </span>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        color: white;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .stats-cards {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 1rem;
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-number {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .user-row {
+        transition: all 0.3s ease;
+    }
+
+    .user-row:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .user-avatar {
+        position: relative;
+    }
+
+    .avatar-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+    }
+
+    .user-info h6 {
+        color: #2c3e50;
+        margin-bottom: 0.25rem;
+    }
+
+    .role-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 0.85rem;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+    .btn-sm {
+        padding: 0.375rem 0.75rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-sm:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .table th {
+        border: none;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+    }
+
+    .table td {
+        border: none;
+        vertical-align: middle;
+        padding: 1rem 0.75rem;
+    }
+
+    .alert {
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    @@media (max-width: 768px) {
+        .page-title {
+            font-size: 2rem;
+        }
+        
+        .stats-cards {
+            flex-direction: column;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<script>
+    // Initialize tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+
+    function refreshTable() {
+        location.reload();
+    }
+</script>
+
+@functions {
+    private string GetRoleBadgeClass(string role)
+    {
+        return role switch
+        {
+            "Admin" => "bg-danger",
+            "Teacher" => "bg-warning",
+            "Student" => "bg-success",
+            _ => "bg-secondary"
+        };
+    }
+    
+    private string GetRoleDisplayName(string role)
+    {
+        return role switch
+        {
+            "Admin" => "Quản trị viên",
+            "Teacher" => "Giáo viên",
+            "Student" => "Học sinh",
+            _ => role
+        };
+    }
+
+    private string GetRoleIcon(string role)
+    {
+        return role switch
+        {
+            "Admin" => "fas fa-shield-alt",
+            "Teacher" => "fas fa-chalkboard-teacher",
+            "Student" => "fas fa-user-graduate",
+            _ => "fas fa-user"
+        };
+    }
+} 

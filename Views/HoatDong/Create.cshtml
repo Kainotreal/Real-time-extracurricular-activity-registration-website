@@ -1,0 +1,376 @@
+@model QuanLyHoatDongNgoaiKhoa.Models.HoatDong
+
+@{
+    ViewData["Title"] = "Tạo hoạt động mới";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="fas fa-plus-circle text-primary"></i>
+                        Tạo hoạt động mới
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Thông báo hướng dẫn -->
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        <h6><i class="fas fa-info-circle"></i> Hướng dẫn tạo hoạt động</h6>
+                        <ul class="mb-0">
+                            <li>Hệ thống sẽ kiểm tra xung đột thời gian và địa điểm tự động</li>
+                            <li>Cảnh báo sẽ hiển thị nếu có xung đột nhẹ, nhưng bạn vẫn có thể tạo hoạt động</li>
+                            <li>Chỉ chặn tạo hoạt động khi có xung đột nghiêm trọng (trùng thời gian hoặc vượt quá giới hạn)</li>
+                            <li>Gợi ý thời gian thay thế sẽ được hiển thị khi có xung đột</li>
+                        </ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <h5><i class="fas fa-exclamation-triangle"></i> Phát hiện xung đột!</h5>
+                            <p>@TempData["ErrorMessage"]</p>
+                            
+                            @if (TempData["AlternativeSlots"] != null)
+                            {
+                                var alternativeSlots = TempData["AlternativeSlots"] as List<QuanLyHoatDongNgoaiKhoa.Services.TimeSlot>;
+                                if (alternativeSlots?.Any() == true)
+                                {
+                                    <hr>
+                                    <h6><i class="fas fa-lightbulb text-warning"></i> Gợi ý thời gian thay thế:</h6>
+                                    <div class="row">
+                                        @foreach (var slot in alternativeSlots.Take(3))
+                                        {
+                                            <div class="col-md-4 mb-2">
+                                                <div class="card border-success">
+                                                    <div class="card-body p-2">
+                                                        <small class="text-success">
+                                                            <i class="fas fa-clock"></i>
+                                                            @slot.StartTime.ToString("dd/MM/yyyy HH:mm") - @slot.EndTime.ToString("HH:mm")
+                                                        </small>
+                                                        <br>
+                                                        <small class="text-muted">
+                                                            <i class="fas fa-map-marker-alt"></i>
+                                                            @slot.DiaDiemName
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            }
+                            
+                            @if (TempData["ShowIgnoreButton"] != null && (bool)TempData["ShowIgnoreButton"])
+                            {
+                                <hr>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle"></i>
+                                        Bạn có thể bỏ qua cảnh báo này nếu chắc chắn muốn tạo hoạt động.
+                                    </small>
+                                    <form asp-action="Create" method="post" style="display: inline;">
+                                        <input type="hidden" name="ignoreWarnings" value="true" />
+                                        <input type="hidden" name="TieuDe" value="@Model?.TieuDe" />
+                                        <input type="hidden" name="MoTa" value="@Model?.MoTa" />
+                                        <input type="hidden" name="ThoiGianBatDau" value="@(Model?.ThoiGianBatDau.ToString("yyyy-MM-ddTHH:mm") ?? "")" />
+                                        <input type="hidden" name="ThoiGianKetThuc" value="@(Model?.ThoiGianKetThuc.ToString("yyyy-MM-ddTHH:mm") ?? "")" />
+                                        <input type="hidden" name="MaDanhMuc" value="@Model?.MaDanhMuc" />
+                                        <input type="hidden" name="MaLoaiHoatDong" value="@Model?.MaLoaiHoatDong" />
+                                        <input type="hidden" name="MaDiaDiem" value="@Model?.MaDiaDiem" />
+                                        <input type="hidden" name="SoLuongToiDa" value="@Model?.SoLuongToiDa" />
+                                        <input type="hidden" name="ChiPhi" value="@Model?.ChiPhi" />
+                                        <input type="hidden" name="YeuCauThamGia" value="@Model?.YeuCauThamGia" />
+                                        <input type="hidden" name="TrangBiCanThiet" value="@Model?.TrangBiCanThiet" />
+                                        <button type="submit" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-exclamation-triangle"></i> Bỏ qua cảnh báo và tạo
+                                        </button>
+                                    </form>
+                                </div>
+                            }
+                            
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form asp-action="Create" id="createActivityForm">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    
+                    <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group mb-3">
+                                <label asp-for="TieuDe" class="control-label">
+                                        <i class="fas fa-heading"></i> Tiêu đề hoạt động
+                                </label>
+                                    <input asp-for="TieuDe" class="form-control" placeholder="Nhập tiêu đề hoạt động..." />
+                                <span asp-validation-for="TieuDe" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label asp-for="MoTa" class="control-label">
+                                        <i class="fas fa-align-left"></i> Mô tả
+                                    </label>
+                                    <textarea asp-for="MoTa" class="form-control" rows="4" placeholder="Mô tả chi tiết về hoạt động..."></textarea>
+                                    <span asp-validation-for="MoTa" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="ThoiGianBatDau" class="control-label">
+                                        <i class="fas fa-calendar-plus"></i> Thời gian bắt đầu
+                                    </label>
+                                    <input asp-for="ThoiGianBatDau" class="form-control" type="datetime-local" />
+                                    <span asp-validation-for="ThoiGianBatDau" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label asp-for="ThoiGianKetThuc" class="control-label">
+                                        <i class="fas fa-calendar-minus"></i> Thời gian kết thúc
+                                    </label>
+                                    <input asp-for="ThoiGianKetThuc" class="form-control" type="datetime-local" />
+                                    <span asp-validation-for="ThoiGianKetThuc" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label asp-for="MaDiaDiem" class="control-label">
+                                        <i class="fas fa-map-marker-alt"></i> Địa điểm
+                                    </label>
+                                    <select asp-for="MaDiaDiem" class="form-control" asp-items="ViewBag.DiaDiems">
+                                        <option value="">-- Chọn địa điểm --</option>
+                                    </select>
+                                    <span asp-validation-for="MaDiaDiem" class="text-danger"></span>
+                        </div>
+
+                                <div class="form-group mb-3">
+                                <label asp-for="MaDanhMuc" class="control-label">
+                                        <i class="fas fa-tag"></i> Danh mục
+                                </label>
+                                    <select asp-for="MaDanhMuc" class="form-control" asp-items="ViewBag.DanhMucHoatDongs">
+                                    <option value="">-- Chọn danh mục --</option>
+                                </select>
+                                <span asp-validation-for="MaDanhMuc" class="text-danger"></span>
+                    </div>
+
+                                <div class="form-group mb-3">
+                                <label asp-for="MaLoaiHoatDong" class="control-label">
+                                        <i class="fas fa-list"></i> Loại hoạt động
+                                </label>
+                                    <select asp-for="MaLoaiHoatDong" class="form-control" asp-items="ViewBag.LoaiHoatDongs">
+                                    <option value="">-- Chọn loại hoạt động --</option>
+                                </select>
+                                <span asp-validation-for="MaLoaiHoatDong" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="SoLuongToiDa" class="control-label">
+                                        <i class="fas fa-users"></i> Số lượng tối đa
+                                </label>
+                                    <input asp-for="SoLuongToiDa" class="form-control" type="number" min="1" placeholder="Nhập số lượng..." />
+                                    <span asp-validation-for="SoLuongToiDa" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                        <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                <label asp-for="ChiPhi" class="control-label">
+                                        <i class="fas fa-money-bill"></i> Chi phí (VNĐ)
+                                </label>
+                                    <input asp-for="ChiPhi" class="form-control" type="number" min="0" placeholder="Nhập chi phí..." />
+                                <span asp-validation-for="ChiPhi" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                        <div class="form-group mb-3">
+                                <label asp-for="YeuCauThamGia" class="control-label">
+                                    <i class="fas fa-clipboard-list"></i> Yêu cầu tham gia
+                                </label>
+                            <textarea asp-for="YeuCauThamGia" class="form-control" rows="3" placeholder="Các yêu cầu để tham gia hoạt động..."></textarea>
+                                <span asp-validation-for="YeuCauThamGia" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                                <label asp-for="TrangBiCanThiet" class="control-label">
+                                    <i class="fas fa-tools"></i> Trang bị cần thiết
+                                </label>
+                            <textarea asp-for="TrangBiCanThiet" class="form-control" rows="3" placeholder="Các trang bị, dụng cụ cần thiết..."></textarea>
+                                <span asp-validation-for="TrangBiCanThiet" class="text-danger"></span>
+                    </div>
+
+                        <div class="form-group">
+                        <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Tạo hoạt động
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Quay lại
+                        </a>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Kiểm tra xung đột realtime khi thay đổi thời gian hoặc địa điểm
+            $('#ThoiGianBatDau, #ThoiGianKetThuc, #MaDiaDiem').on('change', function() {
+                checkScheduleConflict();
+            });
+
+            function checkScheduleConflict() {
+                // Chỉ kiểm tra khi có đủ thông tin cần thiết
+                var thoiGianBatDau = $('#ThoiGianBatDau').val();
+                var thoiGianKetThuc = $('#ThoiGianKetThuc').val();
+                var maDiaDiem = $('#MaDiaDiem').val();
+
+                if (!thoiGianBatDau || !thoiGianKetThuc || !maDiaDiem) {
+                    return;
+                }
+
+                var formData = {
+                    TieuDe: $('#TieuDe').val() || 'Hoạt động mới',
+                    ThoiGianBatDau: thoiGianBatDau,
+                    ThoiGianKetThuc: thoiGianKetThuc,
+                    MaDiaDiem: parseInt(maDiaDiem),
+                    MaDanhMuc: $('#MaDanhMuc').val() ? parseInt($('#MaDanhMuc').val()) : 0,
+                    MaLoaiHoatDong: $('#MaLoaiHoatDong').val() ? parseInt($('#MaLoaiHoatDong').val()) : 0,
+                    SoLuongToiDa: $('#SoLuongToiDa').val() ? parseInt($('#SoLuongToiDa').val()) : 50,
+                    ChiPhi: $('#ChiPhi').val() ? parseInt($('#ChiPhi').val()) : 0,
+                    MoTa: $('#MoTa').val() || '',
+                    YeuCauThamGia: $('#YeuCauThamGia').val() || '',
+                    TrangBiCanThiet: $('#TrangBiCanThiet').val() || ''
+                };
+                
+                $.ajax({
+                    url: '@Url.Action("CheckConflict", "HoatDong")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        if (response.hasConflict) {
+                            showConflictAlert(response);
+                        } else {
+                            hideConflictAlert();
+                            showSuccessAlert();
+                        }
+                    },
+                    error: function() {
+                        console.log('Lỗi khi kiểm tra xung đột');
+                    }
+                });
+            }
+
+            function showConflictAlert(response) {
+                // Xóa alert cũ nếu có
+                hideConflictAlert();
+                hideSuccessAlert();
+                
+                // Phân biệt giữa cảnh báo và lỗi nghiêm trọng
+                var isSeriousConflict = response.conflictType === 'TimeOverlap' || response.conflictType === 'UserLimitExceeded';
+                var alertClass = isSeriousConflict ? 'alert-danger' : 'alert-warning';
+                var icon = isSeriousConflict ? 'fas fa-exclamation-triangle' : 'fas fa-exclamation-circle';
+                var title = isSeriousConflict ? 'Phát hiện xung đột nghiêm trọng!' : 'Phát hiện cảnh báo!';
+                
+                var alertHtml = `
+                    <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                        <h5><i class="${icon}"></i> ${title}</h5>
+                        <ul class="mb-2">
+                            ${response.conflicts.map(msg => `<li>${msg}</li>`).join('')}
+                        </ul>
+                        
+                        ${response.alternativeSlots && response.alternativeSlots.length > 0 ? `
+                            <hr>
+                            <h6><i class="fas fa-lightbulb text-warning"></i> Gợi ý thời gian thay thế:</h6>
+                            <div class="row">
+                                ${response.alternativeSlots.map(slot => `
+                                    <div class="col-md-4 mb-2">
+                                        <div class="card border-success">
+                                            <div class="card-body p-2">
+                                                <small class="text-success">
+                                                    <i class="fas fa-clock"></i> ${slot.startTime} - ${slot.endTime}
+                                                </small>
+                                                <br>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-map-marker-alt"></i> ${slot.diaDiemName}
+                                                </small>
+                                                <button type="button" class="btn btn-sm btn-outline-success mt-1" 
+                                                        onclick="applyTimeSlot('${slot.startTime}', '${slot.endTime}')">
+                                                    <i class="fas fa-check"></i> Sử dụng
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${!isSeriousConflict ? `
+                            <hr>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle"></i>
+                                    Đây chỉ là cảnh báo. Bạn vẫn có thể tạo hoạt động.
+                                </small>
+                                <button type="button" class="btn btn-success btn-sm" onclick="submitForm()">
+                                    <i class="fas fa-check"></i> Tạo hoạt động
+                                </button>
+                            </div>
+                        ` : ''}
+                        
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+                
+                $('.card-body').prepend(alertHtml);
+            }
+
+            function hideConflictAlert() {
+                $('.alert-danger, .alert-warning').remove();
+            }
+
+            function showSuccessAlert() {
+                // Xóa alert cũ nếu có
+                hideSuccessAlert();
+                
+                var alertHtml = `
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <h5><i class="fas fa-check-circle"></i> Không có xung đột!</h5>
+                        <p>Thời gian và địa điểm đã được chọn phù hợp. Bạn có thể tiếp tục tạo hoạt động.</p>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+                
+                $('.card-body').prepend(alertHtml);
+            }
+
+            function hideSuccessAlert() {
+                $('.alert-success').remove();
+            }
+
+            // Function để áp dụng thời gian gợi ý
+            window.applyTimeSlot = function(startTime, endTime) {
+                $('#ThoiGianBatDau').val(startTime);
+                $('#ThoiGianKetThuc').val(endTime);
+                hideConflictAlert();
+                checkScheduleConflict(); // Kiểm tra lại sau khi áp dụng
+            };
+
+            // Function để submit form
+            window.submitForm = function() {
+                $('#createActivityForm').submit();
+            };
+        });
+    </script>
+} 

@@ -1,0 +1,166 @@
+@model IEnumerable<QuanLyHoatDongNgoaiKhoa.Models.ThongBao>
+
+@{
+    ViewData["Title"] = "Thông báo";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-bell me-2"></i>Thông báo hệ thống
+                    </h4>
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="notification-list">
+                            @foreach (var thongBao in Model)
+                            {
+                                <div class="notification-item @(thongBao.DaGui ? "read" : "unread")" data-id="@thongBao.MaThongBao">
+                                    <div class="notification-icon">
+                                        @if (thongBao.LoaiThongBao == "DangKyMoi")
+                                        {
+                                            <i class="fas fa-user-plus text-success"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-info-circle text-info"></i>
+                                        }
+                                    </div>
+                                    <div class="notification-content">
+                                        <h6 class="notification-title">@thongBao.TieuDe</h6>
+                                        <p class="notification-text">@thongBao.NoiDung</p>
+                                        <div class="notification-meta">
+                                            <span class="notification-time">
+                                                <i class="fas fa-clock"></i>
+                                                @thongBao.NgayTao.ToString("dd/MM/yyyy HH:mm")
+                                            </span>
+                                            @if (thongBao.HoatDong != null)
+                                            {
+                                                <span class="notification-activity">
+                                                    <i class="fas fa-calendar"></i>
+                                                    <a href="/HoatDong/Details/@thongBao.MaHoatDong">@thongBao.HoatDong.TieuDe</a>
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="notification-actions">
+                                        @if (!thongBao.DaGui)
+                                        {
+                                            <button class="btn btn-sm btn-outline-success mark-read-btn" 
+                                                    onclick="markAsRead(@thongBao.MaThongBao)">
+                                                <i class="fas fa-check"></i> Đánh dấu đã đọc
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-success">Đã đọc</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <div class="mb-4">
+                                <i class="fas fa-bell-slash fa-4x text-muted"></i>
+                            </div>
+                            <h5 class="text-muted">Chưa có thông báo nào</h5>
+                            <p class="text-muted">Các thông báo mới sẽ xuất hiện ở đây</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function markAsRead(id) {
+            $.post('/Admin/MarkNotificationAsRead', { id: id }, function(data) {
+                if (data.success) {
+                    // Cập nhật UI
+                    $(`.notification-item[data-id="${id}"]`).removeClass('unread').addClass('read');
+                    $(`.notification-item[data-id="${id}"] .mark-read-btn`).replaceWith('<span class="badge badge-success">Đã đọc</span>');
+                }
+            });
+        }
+    </script>
+}
+
+<style>
+    .notification-list {
+        max-height: 600px;
+        overflow-y: auto;
+    }
+
+    .notification-item {
+        display: flex;
+        align-items: flex-start;
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        transition: background-color 0.3s ease;
+    }
+
+    .notification-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .notification-item.unread {
+        background-color: #e3f2fd;
+        border-left: 4px solid #2196f3;
+    }
+
+    .notification-item.read {
+        background-color: #fafafa;
+    }
+
+    .notification-icon {
+        margin-right: 15px;
+        font-size: 1.5rem;
+        margin-top: 5px;
+    }
+
+    .notification-content {
+        flex: 1;
+    }
+
+    .notification-title {
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    .notification-text {
+        color: #666;
+        margin-bottom: 10px;
+        line-height: 1.4;
+    }
+
+    .notification-meta {
+        display: flex;
+        gap: 15px;
+        font-size: 0.9rem;
+        color: #888;
+    }
+
+    .notification-meta span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .notification-actions {
+        margin-left: 15px;
+    }
+
+    .mark-read-btn {
+        font-size: 0.8rem;
+    }
+</style> 

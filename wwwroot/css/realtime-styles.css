@@ -1,0 +1,415 @@
+/* Realtime Styles - CSS cho các chức năng realtime */
+
+/* Loading states */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Realtime updates */
+.realtime-update {
+    animation: highlight 0.5s ease-in-out;
+}
+
+@keyframes highlight {
+    0% { background-color: transparent; }
+    50% { background-color: rgba(52, 152, 219, 0.2); }
+    100% { background-color: transparent; }
+}
+
+/* Form realtime styles */
+.form-realtime {
+    transition: all 0.3s ease;
+}
+
+.form-realtime.submitting {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.form-realtime.submitting .btn[type="submit"] {
+    position: relative;
+}
+
+.form-realtime.submitting .btn[type="submit"]::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Activity list realtime */
+.activity-list {
+    transition: all 0.3s ease;
+}
+
+.activity-card {
+    transition: all 0.3s ease;
+}
+
+.activity-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.activity-card.new {
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Status badges realtime */
+.status-badge {
+    transition: all 0.3s ease;
+}
+
+.status-badge.updating {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+/* Statistics realtime */
+.stat-card {
+    transition: all 0.3s ease;
+}
+
+.stat-card.updating {
+    animation: highlight 0.5s ease-in-out;
+}
+
+.stat-number {
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.stat-number.updating {
+    color: #3498db;
+}
+
+/* Notification realtime */
+.notification-item {
+    transition: all 0.3s ease;
+}
+
+.notification-item.new {
+    animation: slideInRight 0.5s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Button states */
+.btn-realtime {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-realtime:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btn-realtime.loading {
+    color: transparent;
+}
+
+.btn-realtime.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Alert container */
+.alert-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 400px;
+}
+
+.alert-realtime {
+    animation: slideInRight 0.3s ease-out;
+    margin-bottom: 10px;
+}
+
+/* Form validation realtime */
+.form-control.realtime-valid {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.form-control.realtime-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+/* Progress indicators */
+.progress-realtime {
+    height: 4px;
+    background-color: #e9ecef;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-realtime-bar {
+    height: 100%;
+    background-color: #3498db;
+    transition: width 0.3s ease;
+}
+
+/* Auto-refresh indicators */
+.auto-refresh-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(52, 152, 219, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    z-index: 1000;
+    animation: fadeInOut 2s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(10px); }
+    50% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-10px); }
+}
+
+/* Notification System Styles */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 400px;
+    pointer-events: none;
+}
+
+.notification {
+    background: var(--pixel-white);
+    border: var(--pixel-border);
+    box-shadow: var(--pixel-shadow);
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    pointer-events: auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notification.hide {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.notification::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--pixel-blue-dark);
+}
+
+.notification.success::before {
+    background: var(--pixel-green);
+}
+
+.notification.warning::before {
+    background: var(--pixel-yellow);
+}
+
+.notification.error::before {
+    background: var(--pixel-red);
+}
+
+.notification.info::before {
+    background: var(--pixel-blue-dark);
+}
+
+.notification-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.notification-icon {
+    flex-shrink: 0;
+    font-size: 18px;
+    margin-top: 2px;
+}
+
+.notification-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.notification-title {
+    font-weight: bold;
+    font-size: 14px;
+    color: var(--pixel-dark);
+    margin: 0;
+}
+
+.notification-time {
+    font-size: 11px;
+    color: var(--pixel-gray);
+}
+
+.notification-message {
+    font-size: 13px;
+    color: var(--pixel-dark);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: var(--pixel-gray);
+    cursor: pointer;
+    padding: 4px;
+    font-size: 12px;
+    transition: color 0.2s ease;
+}
+
+.notification-close:hover {
+    color: var(--pixel-red);
+}
+
+.notification-pulse {
+    animation: pulse 0.6s ease-in-out;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+/* Fallback styles nếu CSS variables không có */
+:root {
+    --pixel-white: #ffffff;
+    --pixel-dark: #2c3e50;
+    --pixel-gray: #95a5a6;
+    --pixel-blue-dark: #4682B4;
+    --pixel-green: #4ecdc4;
+    --pixel-yellow: #ffe66d;
+    --pixel-red: #ff6b6b;
+    --pixel-border: 3px solid #000;
+    --pixel-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8);
+}
+
+/* Responsive design cho notification */
+@media (max-width: 768px) {
+    .notification-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .notification {
+        padding: 12px 16px;
+    }
+    
+    .notification-title {
+        font-size: 13px;
+    }
+    
+    .notification-message {
+        font-size: 12px;
+    }
+}
+
+/* Responsive realtime */
+@media (max-width: 768px) {
+    .alert-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .auto-refresh-indicator {
+        bottom: 10px;
+        right: 10px;
+        font-size: 10px;
+        padding: 6px 10px;
+    }
+} 

@@ -1,0 +1,68 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<ul class="navbar-nav">
+@if (SignInManager.IsSignedIn(User))
+{
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" onclick="toggleDropdown()" aria-expanded="false" tabindex="0">
+            <i class="fas fa-user-circle me-1"></i> <span>@User.Identity?.Name</span>
+            <span class="ms-1 caret">▼</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end mt-2 shadow" id="userDropdownMenu" aria-labelledby="navbarDropdown" style="z-index: 1050; display: none;">
+            <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile"><i class="fas fa-user"></i> Hồ sơ</a></li>
+            <li><a class="dropdown-item" asp-controller="Account" asp-action="Settings"><i class="fas fa-cog"></i> Cài đặt</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
+                    <button type="submit" class="dropdown-item">
+                        <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link" asp-controller="Account" asp-action="Register">
+            <i class="fas fa-user-plus"></i> Đăng ký
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" asp-controller="Account" asp-action="Login">
+            <i class="fas fa-sign-in-alt"></i> Đăng nhập
+        </a>
+    </li>
+}
+</ul>
+
+<script>
+function toggleDropdown() {
+    const dropdownMenu = document.getElementById('userDropdownMenu');
+    const isVisible = dropdownMenu.style.display === 'block';
+    
+    // Đóng tất cả dropdown khác
+    const allDropdowns = document.querySelectorAll('.dropdown-menu');
+    allDropdowns.forEach(menu => {
+        if (menu !== dropdownMenu) {
+            menu.style.display = 'none';
+        }
+    });
+    
+    // Toggle dropdown hiện tại
+    dropdownMenu.style.display = isVisible ? 'none' : 'block';
+}
+
+// Đóng dropdown khi click ra ngoài
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('userDropdownMenu');
+    const dropdownToggle = document.getElementById('navbarDropdown');
+    
+    if (!dropdown.contains(event.target) && !dropdownToggle.contains(event.target)) {
+        dropdown.style.display = 'none';
+    }
+});
+</script>

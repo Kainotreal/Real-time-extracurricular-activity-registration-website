@@ -1,0 +1,117 @@
+@model IEnumerable<QuanLyHoatDongNgoaiKhoa.Models.DangKyThamGia>
+
+@if (Model.Any())
+{
+    <div class="registration-list">
+        @foreach (var dangKy in Model)
+        {
+            <div class="registration-card" data-id="@dangKy.MaDangKy" data-hoat-dong-id="@dangKy.MaHoatDong" data-registration-id="@dangKy.MaDangKy">
+                <div class="card-header">
+                    <div class="registration-info">
+                        <h5 class="activity-title">
+                            <i class="fas fa-calendar-check"></i>
+                            @dangKy.HoatDong?.TieuDe
+                        </h5>
+                        <div class="registration-meta">
+                            <span class="registration-date">
+                                <i class="fas fa-calendar"></i>
+                                Đăng ký: @dangKy.NgayDangKy.ToString("dd/MM/yyyy HH:mm")
+                            </span>
+                            <span class="registration-user">
+                                <i class="fas fa-user"></i>
+                                Người đăng ký: @dangKy.UserId
+                            </span>
+                        </div>
+                    </div>
+                    <div class="registration-status">
+                        <span class="badge status-pending">
+                            <i class="fas fa-clock"></i>
+                            @dangKy.TrangThaiDangKy?.TenTrangThaiDangKy
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="activity-details">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="detail-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <strong>Thời gian:</strong>
+                                    <span>@dangKy.HoatDong?.ThoiGianBatDau.ToString("dd/MM/yyyy HH:mm") - @dangKy.HoatDong?.ThoiGianKetThuc.ToString("dd/MM/yyyy HH:mm")</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="detail-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <strong>Địa điểm:</strong>
+                                    <span>@(dangKy.HoatDong?.DiaDiem?.TenDiaDiem ?? "Chưa cập nhật")</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="detail-item">
+                                    <i class="fas fa-users"></i>
+                                    <strong>Số lượng:</strong>
+                                    <span>@(dangKy.HoatDong?.DanhSachDangKy?.Count(d => d.MaTrangThaiDangKy == 2) ?? 0)/@dangKy.HoatDong?.SoLuongToiDa người</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="detail-item">
+                                    <i class="fas fa-money-bill"></i>
+                                    <strong>Chi phí:</strong>
+                                    <span>@((dangKy.HoatDong?.ChiPhi ?? 0).ToString("N0")) VNĐ</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(dangKy.GhiChu))
+                        {
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="detail-item">
+                                        <i class="fas fa-comment"></i>
+                                        <strong>Ghi chú:</strong>
+                                        <span>@dangKy.GhiChu</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    
+                    <div class="registration-actions">
+                        <button type="button" class="btn btn-success confirm-btn" 
+                                data-id="@dangKy.MaDangKy" 
+                                data-action="confirm"
+                                onclick="window.dangKyRealtime.confirmRegistration(@dangKy.MaDangKy, true)">
+                            <i class="fas fa-check"></i> Xác nhận
+                        </button>
+                        
+                        <button type="button" class="btn btn-danger reject-btn" 
+                                data-id="@dangKy.MaDangKy" 
+                                data-action="reject"
+                                onclick="window.dangKyRealtime.confirmRegistration(@dangKy.MaDangKy, false)">
+                            <i class="fas fa-times"></i> Từ chối
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="empty-state">
+        <div class="empty-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h3>Không có đăng ký nào chờ xác nhận</h3>
+        <p>Tất cả đăng ký đã được xử lý hoặc chưa có đăng ký mới nào.</p>
+        <a asp-action="Index" class="btn btn-primary">
+            <i class="fas fa-list"></i>
+            Xem tất cả đăng ký
+        </a>
+    </div>
+} 

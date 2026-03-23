@@ -1,0 +1,106 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Lỗi";
+}
+
+<style>
+    /* Import font pixel hỗ trợ tiếng Việt */
+    @@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    @@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+    @@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+    @@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+    /* Font pixel chính cho tiếng Việt */
+    :root {
+        --pixel-font: 'VT323', 'Press Start 2P', 'Share Tech Mono', monospace;
+        --pixel-font-small: 'VT323', monospace;
+        --pixel-font-heading: 'Orbitron', sans-serif;
+        --pixel-font-retro: 'Press Start 2P', cursive;
+    }
+
+    .error-container {
+        font-family: var(--pixel-font-small);
+        text-align: center;
+        padding: 50px 20px;
+    }
+
+    .error-icon {
+        font-size: 80px;
+        color: #dc3545;
+        margin-bottom: 20px;
+    }
+
+    .error-title {
+        font-family: var(--pixel-font-heading);
+        font-size: 32px;
+        font-weight: 700;
+        color: #dc3545;
+        margin-bottom: 15px;
+    }
+
+    .error-message {
+        font-size: 18px;
+        color: #6c757d;
+        margin-bottom: 30px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .error-details {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 800px;
+        font-family: var(--pixel-font-small);
+        font-size: 14px;
+        text-align: left;
+    }
+
+    .btn {
+        font-family: var(--pixel-font-small);
+        font-size: 16px;
+        letter-spacing: 0.5px;
+        margin: 10px;
+    }
+</style>
+
+<div class="container">
+    <div class="error-container">
+        <div class="error-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        
+        <h1 class="error-title">Đã xảy ra lỗi!</h1>
+        
+        <div class="error-message">
+            @if (!string.IsNullOrEmpty(Model?.Message))
+            {
+                <p>@Model.Message</p>
+            }
+            else
+            {
+                <p>Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau hoặc liên hệ quản trị viên nếu vấn đề vẫn tiếp tục.</p>
+            }
+        </div>
+
+        @if (Model?.ShowDetails == true && !string.IsNullOrEmpty(Model?.Details))
+        {
+            <div class="error-details">
+                <h5><i class="fas fa-info-circle"></i> Chi tiết lỗi:</h5>
+                <pre style="white-space: pre-wrap; word-wrap: break-word;">@Model.Details</pre>
+            </div>
+        }
+
+        <div class="mt-4">
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Quay lại trang trước
+            </a>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                <i class="fas fa-home"></i> Về trang chủ
+            </a>
+        </div>
+    </div>
+</div> 

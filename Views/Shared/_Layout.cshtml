@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TOH: Hoạt Động Ngoại Khóa</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/QuanLyHoatDongNgoaiKhoa.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/realtime.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/realtime-styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Fallback Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.1/css/all.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Share+Tech+Mono&family=Orbitron:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Pixel Art Retro Game Style - Enhanced */
+        :root {
+            --pixel-black: #000000;
+            --pixel-white: #ffffff;
+            --pixel-blue-pastel: #87CEEB;
+            --pixel-blue-light: #B0E0E6;
+            --pixel-blue-dark: #4682B4;
+            --pixel-blue-navy: #191970;
+            --pixel-orange: #ff6b35;
+            --pixel-green: #4ecdc4;
+            --pixel-yellow: #ffe66d;
+            --pixel-red: #ff6b6b;
+            --pixel-purple: #a8e6cf;
+            --pixel-dark: #2c3e50;
+            --pixel-gray: #95a5a6;
+            --pixel-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8);
+            --pixel-border: 3px solid #000;
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            
+            /* Font pixel chính cho tiếng Việt */
+            --pixel-font: 'JetBrains Mono', 'VT323', 'Source Code Pro', monospace;
+            --pixel-font-small: 'JetBrains Mono', 'VT323', 'Source Code Pro', monospace;
+            --pixel-font-heading: 'Orbitron', sans-serif;
+            --pixel-font-retro: 'Press Start 2P', cursive;
+        }
+
+        /* Áp dụng font pixel cho toàn bộ ứng dụng */
+        * {
+            font-family: var(--pixel-font-small) !important;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        /* Đảm bảo encoding UTF-8 cho tiếng Việt */
+        body {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 16px;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Đảm bảo text tiếng Việt hiển thị đúng */
+        p, span, div, h1, h2, h3, h4, h5, h6, label, input, textarea, select, button, a {
+            font-family: var(--pixel-font-small) !important;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Đảm bảo text trong tables hiển thị đúng */
+        table, th, td {
+            font-family: var(--pixel-font-small) !important;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Đảm bảo text trong cards hiển thị đúng */
+        .card, .card-body, .card-title, .card-text {
+            font-family: var(--pixel-font-small) !important;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Đảm bảo text trong alerts hiển thị đúng */
+        .alert, .alert-success, .alert-danger, .alert-warning, .alert-info {
+            font-family: var(--pixel-font-small) !important;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Đảm bảo text trong modals hiển thị đúng */
+        .modal, .modal-title, .modal-body {
+            font-family: var(--pixel-font-small) !important;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Đảm bảo text trong dropdowns hiển thị đúng */
+        .dropdown-menu, .dropdown-item {
+            font-family: var(--pixel-font-small) !important;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Bảo vệ Font Awesome icons */
+        .fas, .far, .fab, .fa {
+            font-family: 'Font Awesome 6 Free', 'Font Awesome 6 Brands', 'Font Awesome 6 Solid' !important;
+            font-weight: 900 !important;
+            font-style: normal !important;
+            font-variant: normal !important;
+            text-rendering: auto !important;
+            -webkit-font-smoothing: antialiased !important;
+            -moz-osx-font-smoothing: grayscale !important;
+        }
+
+        .far {
+            font-weight: 400 !important;
+        }
+
+        .fab {
+            font-family: 'Font Awesome 6 Brands' !important;
+            font-weight: 400 !important;
+        }
+
+        /* Đảm bảo icons trong nav-link hiển thị đúng */
+        .nav-link .fas,
+        .nav-link .far,
+        .nav-link .fab,
+        .nav-link .fa {
+            font-family: 'Font Awesome 6 Free', 'Font Awesome 6 Brands', 'Font Awesome 6 Solid' !important;
+            font-weight: 900 !important;
+            margin-right: 8px !important;
+        }
+
+        /* Đảm bảo icons trong navbar-brand hiển thị đúng */
+        .navbar-brand .fas,
+        .navbar-brand .far,
+        .navbar-brand .fab,
+        .navbar-brand .fa {
+            font-family: 'Font Awesome 6 Free', 'Font Awesome 6 Brands', 'Font Awesome 6 Solid' !important;
+            font-weight: 900 !important;
+            margin-right: 8px !important;
+        }
+
+        /* Đảm bảo icons trong buttons hiển thị đúng */
+        .btn .fas,
+        .btn .far,
+        .btn .fab,
+        .btn .fa {
+            font-family: 'Font Awesome 6 Free', 'Font Awesome 6 Brands', 'Font Awesome 6 Solid' !important;
+            font-weight: 900 !important;
+            margin-right: 8px !important;
+        }
+
+        /* Headings với font pixel */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--pixel-font-heading) !important;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* Navbar brand với font retro */
+        .navbar-brand {
+            font-family: var(--pixel-font-retro) !important;
+            font-size: 1.5rem;
+            color: var(--pixel-blue-dark) !important;
+            text-shadow: 2px 2px 0px var(--pixel-black);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Nav links với font pixel */
+        .nav-link {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 1.2rem;
+            color: var(--pixel-dark) !important;
+            border: 2px solid transparent;
+            padding: 10px 18px !important;
+            margin: 0 4px;
+            transition: all 0.3s ease;
+            position: relative;
+            font-weight: bold;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* Buttons với font pixel */
+        .btn {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 1.1rem;
+            border: var(--pixel-border);
+            box-shadow: var(--pixel-shadow);
+            background: var(--pixel-white);
+            color: var(--pixel-dark);
+            padding: 12px 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* Form controls với font pixel */
+        .form-control {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 16px;
+        }
+
+        .form-label {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Labels với font pixel */
+        label {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Input, textarea, select với font pixel */
+        input, textarea, select {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 16px;
+        }
+
+        /* Tables với font pixel */
+        table {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 16px;
+        }
+
+        th, td {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 16px;
+        }
+
+        /* Cards với font pixel */
+        .card-title {
+            font-family: var(--pixel-font-heading) !important;
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+
+        .card-text {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 16px;
+        }
+
+        /* Alerts với font pixel */
+        .alert {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 16px;
+        }
+
+        /* Badges với font pixel */
+        .badge {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Dropdown với font pixel */
+        .dropdown-menu {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 16px;
+        }
+
+        .dropdown-item {
+            padding: 15px 25px;
+            border-bottom: 1px solid var(--pixel-black);
+            color: var(--pixel-dark);
+            transition: all 0.3s ease;
+            font-weight: bold;
+            position: relative;
+        }
+
+        /* Modal với font pixel */
+        .modal-title {
+            font-family: var(--pixel-font-heading) !important;
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+
+        .modal-body {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 16px;
+        }
+
+        /* Pagination với font pixel */
+        .pagination {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 16px;
+        }
+
+        .page-link {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 16px;
+        }
+
+        /* Nav tabs với font pixel */
+        .nav-tabs .nav-link {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 16px;
+        }
+
+        /* List group với font pixel */
+        .list-group-item {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 16px;
+        }
+
+        /* Placeholder với font pixel */
+        ::placeholder {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 16px;
+            color: #6c757d;
+        }
+
+        /* Validation messages với font pixel */
+        .text-danger, .text-success, .text-warning, .text-info {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 14px;
+        }
+
+        /* Toast notifications với font pixel */
+        .toast {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 16px !important;
+            letter-spacing: 0.5px;
+        }
+
+        /* Footer với font pixel */
+        .footer {
+            font-family: var(--pixel-font-small) !important;
+            font-size: 16px;
+        }
+
+        /* Custom scrollbar với font pixel */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--pixel-blue-light) 0%, var(--pixel-blue-pastel) 50%, var(--pixel-blue-dark) 100%);
+            background-size: 100% 100%;
+            background-color: var(--pixel-blue-light);
+            color: var(--pixel-dark);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            font-family: var(--pixel-font-small) !important;
+            font-size: 16px;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
+        }
+
+        /* Enhanced Pixel Border Effect */
+        .pixel-border {
+            border: var(--pixel-border);
+            box-shadow: 
+                var(--pixel-shadow),
+                0 8px 32px rgba(70, 130, 180, 0.1);
+            background: var(--pixel-white);
+            position: relative;
+            image-rendering: pixelated;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .pixel-border:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                6px 6px 0px rgba(0, 0, 0, 0.8),
+                0 12px 40px rgba(70, 130, 180, 0.2);
+        }
+
+        .pixel-border::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: var(--pixel-black);
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        /* Enhanced Header/Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: var(--pixel-border);
+            box-shadow: 
+                var(--pixel-shadow),
+                0 8px 32px rgba(70, 130, 180, 0.1);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.05);
+            text-shadow: 3px 3px 0px var(--pixel-black), 0 0 10px rgba(70, 130, 180, 0.5);
+        }
+
+        .navbar-brand::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--pixel-blue-dark);
+            transition: width 0.3s ease;
+        }
+
+        .navbar-brand:hover::after {
+            width: 100%;
+        }
+
+        /* HUTECH Logo Styles */
+        .hutech-logo-img {
+            height: 45px;
+            width: auto;
+            margin-right: 15px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+            transition: all 0.3s ease;
+            image-rendering: auto;
+            border-radius: 4px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px;
+        }
+
+        .hutech-logo-img:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+
+
+        .brand-text {
+            font-family: var(--pixel-font-heading);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--pixel-dark);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-left: 5px;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(70, 130, 180, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .nav-link:hover {
+            color: var(--pixel-blue-dark) !important;
+            border: 2px solid var(--pixel-black);
+            background: var(--pixel-blue-light);
+            transform: translate(-2px, -2px);
+            box-shadow: 4px 4px 0px var(--pixel-black);
+        }
+
+        .nav-link:active {
+            transform: translate(0px, 0px);
+            box-shadow: 2px 2px 0px var(--pixel-black);
+        }
+
+        /* Enhanced Pixel Button Style */
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: 8px 8px 0px var(--pixel-black);
+            background: var(--pixel-blue-light);
+            color: var(--pixel-dark);
+        }
+
+        .btn:active {
+            transform: translate(0px, 0px);
+            box-shadow: 2px 2px 0px var(--pixel-black);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--pixel-blue-dark), var(--pixel-blue-navy));
+            color: var(--pixel-white);
+            font-weight: bold;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--pixel-green), #2ecc71);
+            color: var(--pixel-white);
+            font-weight: bold;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--pixel-yellow), #f39c12);
+            color: var(--pixel-dark);
+            font-weight: bold;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--pixel-red), #e74c3c);
+            color: var(--pixel-white);
+            font-weight: bold;
+        }
+
+        /* Enhanced Pixel Dropdown */
+        .dropdown-menu {
+            border: var(--pixel-border);
+            box-shadow: 
+                var(--pixel-shadow),
+                0 8px 32px rgba(70, 130, 180, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0;
+            margin: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            display: none;
+            position: absolute;
+            z-index: 1000;
+            min-width: 200px;
+        }
+
+        .dropdown-menu.show {
+            display: block !important;
+        }
+
+        .dropdown-item {
+            padding: 15px 25px;
+            border-bottom: 1px solid var(--pixel-black);
+            color: var(--pixel-dark);
+            transition: all 0.3s ease;
+            font-weight: bold;
+            position: relative;
+            display: block;
+            text-decoration: none;
+        }
+
+        .dropdown-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 0;
+            height: 100%;
+            background: var(--pixel-blue-light);
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+
+        .dropdown-item:hover::before {
+            width: 100%;
+        }
+
+        .dropdown-item:hover {
+            background: transparent;
+            color: var(--pixel-dark);
+            transform: translateX(8px);
+            text-decoration: none;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Dropdown toggle styles */
+        .dropdown-toggle::after {
+            display: inline-block;
+            margin-left: 0.255em;
+            vertical-align: 0.255em;
+            content: "";
+            border-top: 0.3em solid;
+            border-right: 0.3em solid transparent;
+            border-bottom: 0;
+            border-left: 0.3em solid transparent;
+        }
+
+        /* Ensure dropdown positioning */
+        .dropdown {
+            position: relative;
+        }
+
+        /* Enhanced Pixel Card Style */
+        .card {
+            border: var(--pixel-border);
+            box-shadow: 
+                var(--pixel-shadow),
+                0 8px 32px rgba(70, 130, 180, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            margin-bottom: 25px;
+            border-radius: 12px;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--pixel-blue-dark), var(--pixel-blue-navy));
+            color: var(--pixel-white);
+            border-bottom: var(--pixel-border);
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        /* Enhanced Pixel Table Style */
+        .table {
+            border: var(--pixel-border);
+            background: var(--pixel-white);
+            box-shadow: var(--pixel-shadow);
+        }
+
+        .table thead th {
+            background: linear-gradient(135deg, var(--pixel-blue-dark), var(--pixel-blue-navy));
+            color: var(--pixel-white);
+            border-bottom: var(--pixel-border);
+            padding: 15px;
+            font-weight: bold;
+        }
+
+        .table tbody td {
+            border-bottom: 1px solid var(--pixel-black);
+            padding: 12px 15px;
+        }
+
+        .table tbody tr:hover {
+            background: var(--pixel-blue-light);
+            transform: scale(1.01);
+            transition: all 0.3s ease;
+        }
+
+        /* Enhanced Pixel Alert Style */
+        .alert {
+            border: var(--pixel-border);
+            box-shadow: var(--pixel-shadow);
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, var(--pixel-green), #2ecc71);
+            color: var(--pixel-white);
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, var(--pixel-red), #e74c3c);
+            color: var(--pixel-white);
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, var(--pixel-yellow), #f39c12);
+            color: var(--pixel-dark);
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, var(--pixel-blue-dark), var(--pixel-blue-navy));
+            color: var(--pixel-white);
+        }
+
+        /* Enhanced Pixel Form Style */
+        .form-control {
+            border: var(--pixel-border);
+            box-shadow: var(--pixel-shadow);
+            border-radius: 8px;
+            padding: 12px 15px;
+            background: var(--pixel-white);
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--pixel-blue-dark);
+            box-shadow: 0 0 0 0.2rem rgba(70, 130, 180, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* Enhanced Pixel Badge Style */
+        .badge {
+            border: 1px solid var(--pixel-black);
+            box-shadow: 2px 2px 0px var(--pixel-black);
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-weight: bold;
+        }
+
+        /* Enhanced Pixel Pagination Style */
+        .pagination .page-link {
+            border: var(--pixel-border);
+            box-shadow: var(--pixel-shadow);
+            background: var(--pixel-white);
+            color: var(--pixel-dark);
+            margin: 0 2px;
+            transition: all 0.3s ease;
+        }
+
+        .pagination .page-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 4px 4px 0px var(--pixel-black);
+            background: var(--pixel-blue-light);
+        }
+
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(135deg, var(--pixel-blue-dark), var(--pixel-blue-navy));
+            color: var(--pixel-white);
+            border: var(--pixel-border);
+        }
+
+        /* Enhanced Pixel Modal Style */
+        .modal-content {
+            border: var(--pixel-border);
+            box-shadow: var(--pixel-shadow);
+            background: var(--pixel-white);
+            border-radius: 12px;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--pixel-blue-dark), var(--pixel-blue-navy));
+            color: var(--pixel-white);
+            border-bottom: var(--pixel-border);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .modal-footer {
+            border-top: var(--pixel-border);
+            border-radius: 0 0 12px 12px;
+        }
+
+        /* Enhanced Pixel Toast Style */
+        .toast {
+            border: var(--pixel-border);
+            box-shadow: var(--pixel-shadow);
+            background: var(--pixel-white);
+            border-radius: 8px;
+        }
+
+        .toast-header {
+            background: linear-gradient(135deg, var(--pixel-blue-dark), var(--pixel-blue-navy));
+            color: var(--pixel-white);
+            border-bottom: var(--pixel-border);
+        }
+
+        /* Enhanced Pixel Footer Style */
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: var(--pixel-border);
+            box-shadow: 
+                var(--pixel-shadow),
+                0 -8px 32px rgba(70, 130, 180, 0.1);
+            padding: 20px 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Responsive Design */
+        @@media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            .nav-link {
+                font-size: 1rem;
+                padding: 8px 12px !important;
+            }
+            
+            .btn {
+                font-size: 1rem;
+                padding: 10px 20px;
+            }
+            
+            .card-title {
+                font-size: 18px;
+            }
+            
+            .form-control {
+                font-size: 14px;
+            }
+
+            /* Mobile dropdown styles */
+            .dropdown-menu {
+                position: static !important;
+                float: none;
+                width: 100%;
+                margin-top: 0;
+                border: none;
+                box-shadow: none;
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            .dropdown-item {
+                padding: 10px 20px;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        /* Animation Effects */
+        @@keyframes pixelGlow {
+            0% { box-shadow: var(--pixel-shadow); }
+            50% { box-shadow: var(--pixel-shadow), 0 0 20px rgba(70, 130, 180, 0.5); }
+            100% { box-shadow: var(--pixel-shadow); }
+        }
+
+        .pixel-glow {
+            animation: pixelGlow 2s ease-in-out infinite;
+        }
+
+        @@keyframes pixelFloat {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .pixel-float {
+            animation: pixelFloat 3s ease-in-out infinite;
+        }
+
+        /* Loading Spinner with Pixel Style */
+        .pixel-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--pixel-black);
+            border-top: 4px solid var(--pixel-blue-dark);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @@keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--pixel-blue-light);
+            border: 1px solid var(--pixel-black);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--pixel-blue-dark);
+            border: 1px solid var(--pixel-black);
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--pixel-blue-navy);
+        }
+
+        /* Selection Style */
+        ::selection {
+            background: var(--pixel-blue-light);
+            color: var(--pixel-dark);
+        }
+
+        ::-moz-selection {
+            background: var(--pixel-blue-light);
+            color: var(--pixel-dark);
+        }
+    </style>
+</head>
+    <body data-user-id="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value" 
+          data-user-roles="@string.Join(",", User.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Role).Select(c => c.Value))">
+        <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light pixel-border">
+        <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/logohutech.jpg" alt="HUTECH Logo" class="hutech-logo-img" />
+                    <span class="brand-text">TOH</span>
+            </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <!-- Trang chủ -->
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-home"></i> Trang chủ
+                            </a>
+                        </li>
+                        
+                        <!-- Hoạt động -->
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="HoatDong" asp-action="Index">
+                                <i class="fas fa-calendar-alt"></i> Hoạt động
+                            </a>
+                        </li>
+                        
+                        <!-- Menu cho Student -->
+                        @if (User.IsInRole("Student"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="studentDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user-graduate"></i> Sinh viên
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="studentDropdown">
+                                    <li>
+                                        <a class="dropdown-item" asp-area="" asp-controller="DangKyThamGia" asp-action="Index">
+                                            <i class="fas fa-user-plus"></i> Đăng ký hoạt động
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="" asp-controller="DangKyThamGia" asp-action="MyRegistrations">
+                                            <i class="fas fa-user-check"></i> Hoạt động của tôi
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="" asp-controller="ThongBao" asp-action="MyNotifications">
+                                            <i class="fas fa-bell"></i> Thông báo của tôi
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+                        }
+                        
+                        <!-- Menu cho Teacher -->
+                        @if (User.IsInRole("Teacher"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="teacherDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-chalkboard-teacher"></i> Giáo viên
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="teacherDropdown">
+                                    <li>
+                                        <a class="dropdown-item" asp-area="" asp-controller="DangKyThamGia" asp-action="XacNhanList">
+                                            <i class="fas fa-check-circle"></i> Xác nhận đăng ký
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="" asp-controller="ThongBao" asp-action="MyNotifications">
+                                            <i class="fas fa-bell"></i> Thông báo của tôi
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        
+                        <!-- Menu cho Admin -->
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-cog"></i> Quản trị
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                                    <li>
+                                        <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="Index">
+                                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="Users">
+                                            <i class="fas fa-users"></i> Quản lý người dùng
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="" asp-controller="HoatDong" asp-action="XacNhanHoatDong">
+                                            <i class="fas fa-check-circle"></i> Xác nhận hoạt động
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="" asp-controller="DangKyThamGia" asp-action="XacNhanList">
+                                            <i class="fas fa-list-check"></i> Xác nhận đăng ký
+                                        </a>
+                                    </li>
+                                                            <li>
+                            <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="Reports">
+                                <i class="fas fa-chart-bar"></i> Báo cáo thống kê
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-area="" asp-controller="ThongBao" asp-action="MyNotifications">
+                                <i class="fas fa-bell"></i> Thông báo của tôi
+                            </a>
+                        </li>
+                                    
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <main role="main" class="pb-3">
+        @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="pixel-border" style="padding: 15px; text-align: center;">
+                <span style="color: var(--pixel-white); font-weight: 600;">© 2025 TOH</span> - 
+                <span style="color: rgba(255, 255, 255, 0.9);">Hệ thống Quản Lý Hoạt Động Ngoại Khóa</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/custom-toast.js" asp-append-version="true"></script>
+    
+    <!-- SignalR Scripts (phải load trước realtime-notifications.js) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
+    <script src="~/js/dangky-realtime.js" asp-append-version="true"></script>
+    
+    <!-- Realtime Scripts (sau SignalR) -->
+    <script src="~/js/realtime-notifications.js" asp-append-version="true"></script>
+    <script src="~/js/realtime-functions.js" asp-append-version="true"></script>
+    
+    <!-- Bootstrap Dropdown Fix -->
+    <script>
+        // Đảm bảo Bootstrap dropdown hoạt động
+        window.addEventListener('load', function() {
+            if (typeof bootstrap !== 'undefined') {
+                // Initialize all dropdowns
+                var dropdowns = document.querySelectorAll('.dropdown-toggle');
+                dropdowns.forEach(function(dropdown) {
+                    new bootstrap.Dropdown(dropdown);
+                });
+            } else {
+                console.log('Bootstrap not loaded, using fallback dropdown');
+            }
+        });
+    </script>
+    
+    <!-- jQuery Validation -->
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    
+    <!-- Notification Container -->
+    <div id="notification-container"></div>
+    
+    <!-- User Roles Data -->
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div data-user-roles="@string.Join(",", User.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Role).Select(c => c.Value))" 
+             data-user-id="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value" 
+             style="display: none;"></div>
+    }
+    
+    <!-- UTF-8 Encoding Fix -->
+    <script>
+        // Đảm bảo encoding UTF-8 cho tiếng Việt
+        document.addEventListener('DOMContentLoaded', function() {
+            // Đặt charset UTF-8
+            if (document.characterSet !== 'UTF-8') {
+                console.log('Setting charset to UTF-8');
+                document.characterSet = 'UTF-8';
+            }
+            
+            // Đảm bảo meta charset được set đúng
+            let metaCharset = document.querySelector('meta[charset]');
+            if (!metaCharset) {
+                metaCharset = document.createElement('meta');
+                metaCharset.setAttribute('charset', 'utf-8');
+                document.head.insertBefore(metaCharset, document.head.firstChild);
+            } else {
+                metaCharset.setAttribute('charset', 'utf-8');
+            }
+        });
+    </script>
+
+
+
+    <!-- Dropdown Fix Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Đảm bảo Bootstrap dropdown hoạt động
+            var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+            var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl);
+            });
+
+            // Thêm event listener cho dropdown
+            document.querySelectorAll('.dropdown-toggle').forEach(function(element) {
+                element.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var dropdownMenu = this.nextElementSibling;
+                    if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
+                        dropdownMenu.classList.toggle('show');
+                    }
+                });
+            });
+
+            // Đóng dropdown khi click bên ngoài
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown')) {
+                    document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
+                        menu.classList.remove('show');
+                    });
+                }
+            });
+
+            // Thêm hover effect cho dropdown trên desktop
+            if (window.innerWidth > 768) {
+                document.querySelectorAll('.dropdown').forEach(function(dropdown) {
+                    dropdown.addEventListener('mouseenter', function() {
+                        var menu = this.querySelector('.dropdown-menu');
+                        if (menu) {
+                            menu.classList.add('show');
+                        }
+                    });
+
+                    dropdown.addEventListener('mouseleave', function() {
+                        var menu = this.querySelector('.dropdown-menu');
+                        if (menu) {
+                            menu.classList.remove('show');
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+
+    <!-- Font Awesome Check and Load -->
+    <script>
+        // Kiểm tra Font Awesome đã load chưa
+        function checkFontAwesome() {
+            const testElement = document.createElement('i');
+            testElement.className = 'fas fa-home';
+            testElement.style.position = 'absolute';
+            testElement.style.left = '-9999px';
+            testElement.style.fontSize = '1px';
+            document.body.appendChild(testElement);
+            
+            const computedStyle = window.getComputedStyle(testElement, ':before');
+            const content = computedStyle.getPropertyValue('content');
+            
+            document.body.removeChild(testElement);
+            
+            // Nếu Font Awesome chưa load, thử load lại
+            if (!content || content === 'none' || content === 'normal') {
+                console.log('Font Awesome not loaded, attempting to reload...');
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css';
+                document.head.appendChild(link);
+            }
+        }
+
+        // Kiểm tra khi trang load xong
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(checkFontAwesome, 1000);
+        });
+    </script>
+
+    <!-- Retro Sound Effects -->
+    <script>
+        // Retro sound effects for Pixel Art theme
+        function playRetroSound(frequency = 440, duration = 100) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+            oscillator.type = 'square'; // Retro square wave
+            
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration / 1000);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration / 1000);
+        }
+
+        // Add retro sound to all buttons and links
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.btn, .nav-link, .dropdown-item');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Different sounds for different actions
+                    if (this.classList.contains('btn-danger')) {
+                        playRetroSound(200, 150); // Low sound for danger
+                    } else if (this.classList.contains('btn-success')) {
+                        playRetroSound(800, 100); // High sound for success
+                    } else {
+                        playRetroSound(440, 100); // Default sound
+                    }
+                    
+                    // Add pixel shake effect
+                    this.classList.add('pixel-shake');
+                    setTimeout(() => {
+                        this.classList.remove('pixel-shake');
+                    }, 500);
+                });
+            });
+
+            // Add pixel blink effect to important elements
+            const importantElements = document.querySelectorAll('.navbar-brand, .card-header');
+            importantElements.forEach(element => {
+                // element.classList.add('pixel-blink'); // Removed pixelBlink
+            });
+        });
+
+        // Retro loading animation
+        function showPixelLoading() {
+            const loading = document.createElement('div');
+            loading.className = 'pixel-loading';
+            loading.style.position = 'fixed';
+            loading.style.top = '50%';
+            loading.style.left = '50%';
+            loading.style.transform = 'translate(-50%, -50%)';
+            loading.style.zIndex = '9999';
+            document.body.appendChild(loading);
+            
+            setTimeout(() => {
+                document.body.removeChild(loading);
+            }, 2000);
+        }
+    </script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,23 @@
+@model QuanLyHoatDongNgoaiKhoa.Models.DangKyThamGia
+@{
+    ViewBag.Title = "Xác nhận đăng ký";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Xác nhận đăng ký tham gia hoạt động</h2>
+<div class="card mb-3">
+    <div class="card-body">
+                        <h5 class="card-title">Học sinh: @Model.UserId</h5>
+        <p class="card-text">
+            <strong>Hoạt động:</strong> @Model.HoatDong?.TieuDe <br />
+            <strong>Thời gian:</strong> @Model.HoatDong?.ThoiGianBatDau.ToString("dd/MM/yyyy HH:mm") - @Model.HoatDong?.ThoiGianKetThuc.ToString("dd/MM/yyyy HH:mm") <br />
+            <strong>Thời gian đăng ký:</strong> @Model.NgayDangKy.ToString("dd/MM/yyyy HH:mm")
+        </p>
+                        <form asp-action="XacNhan" method="post" id="confirmRegistrationForm">
+            <input type="hidden" name="id" value="@Model.MaDangKy" />
+            <button type="submit" name="dongY" value="true" class="btn btn-success">Xác nhận</button>
+            <button type="submit" name="dongY" value="false" class="btn btn-danger">Từ chối</button>
+            <a href="@Url.Action("XacNhanList")" class="btn btn-secondary">Quay lại</a>
+        </form>
+    </div>
+</div>

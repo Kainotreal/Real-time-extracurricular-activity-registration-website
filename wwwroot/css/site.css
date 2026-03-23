@@ -1,0 +1,267 @@
+/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\
+for details on configuring this project to bundle and minify static web assets. */
+
+/* Import font pixel hỗ trợ tiếng Việt */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+/* Font pixel chính cho tiếng Việt */
+:root {
+    --pixel-font: 'VT323', 'Press Start 2P', 'Share Tech Mono', monospace;
+    --pixel-font-small: 'VT323', monospace;
+    --pixel-font-heading: 'Orbitron', sans-serif;
+    --pixel-font-retro: 'Press Start 2P', cursive;
+}
+
+/* Áp dụng font pixel cho toàn bộ ứng dụng */
+* {
+    font-family: var(--pixel-font-small);
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+body {
+    font-family: var(--pixel-font-small);
+    font-size: 16px;
+    line-height: 1.6;
+    letter-spacing: 0.5px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--pixel-font-heading);
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.navbar-brand {
+    font-family: var(--pixel-font-retro);
+}
+
+a.navbar-brand {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+  font-family: var(--pixel-font-retro);
+}
+
+a {
+  color: #0077cc;
+  font-family: var(--pixel-font-small);
+}
+
+.form-control {
+    font-family: var(--pixel-font-small);
+    font-size: 16px;
+}
+
+.form-control:focus {
+    border-color: #0077cc;
+    box-shadow: 0 0 0 0.2rem #0077cc;
+}
+
+.btn {
+    font-family: var(--pixel-font-small);
+    font-size: 16px;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+  font-family: var(--pixel-font-small);
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.btn-link.nav-link:focus {
+  outline: black auto 1px;
+}
+
+html {
+  font-size: 14px;
+  font-family: var(--pixel-font-small);
+}
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.container {
+  max-width: 960px;
+}
+
+.pricing-header {
+  max-width: 700px;
+}
+
+.border-top {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+  font-size: 1rem;
+  line-height: inherit;
+  font-family: var(--pixel-font-small);
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+  font-family: var(--pixel-font-small);
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  overflow: scroll;
+  white-space: nowrap;
+  line-height: 60px;
+  font-family: var(--pixel-font-small);
+}
+
+/* Cải thiện form elements với font pixel */
+label {
+    font-family: var(--pixel-font-small);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+input, textarea, select {
+    font-family: var(--pixel-font-small);
+    font-size: 16px;
+}
+
+/* Toast notifications với font pixel */
+.toast {
+    font-family: var(--pixel-font-small) !important;
+    font-size: 16px !important;
+    letter-spacing: 0.5px;
+}
+
+/* Alert với font pixel */
+.alert {
+    font-family: var(--pixel-font-small);
+    font-size: 16px;
+}
+
+/* Card title với font pixel */
+.card-title {
+    font-family: var(--pixel-font-heading);
+    font-size: 20px;
+    letter-spacing: 1px;
+}
+
+/* Table với font pixel */
+table {
+    font-family: var(--pixel-font-small);
+    font-size: 16px;
+}
+
+th, td {
+    font-family: var(--pixel-font-small);
+    font-size: 16px;
+}
+
+/* Modal với font pixel */
+.modal-title {
+    font-family: var(--pixel-font-heading);
+    font-size: 20px;
+    letter-spacing: 1px;
+}
+
+.modal-body {
+    font-family: var(--pixel-font-small);
+    font-size: 16px;
+}
+
+/* Dropdown với font pixel */
+.dropdown-menu {
+    font-family: var(--pixel-font-small);
+    font-size: 16px;
+}
+
+.dropdown-item {
+    font-family: var(--pixel-font-small);
+    font-size: 16px;
+}
+
+/* Badge với font pixel */
+.badge {
+    font-family: var(--pixel-font-small);
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+/* Pagination với font pixel */
+.pagination {
+    font-family: var(--pixel-font-small);
+    font-size: 16px;
+}
+
+.page-link {
+    font-family: var(--pixel-font-small);
+    font-size: 16px;
+}
+
+/* Nav tabs với font pixel */
+.nav-tabs .nav-link {
+    font-family: var(--pixel-font-small);
+    font-size: 16px;
+}
+
+/* List group với font pixel */
+.list-group-item {
+    font-family: var(--pixel-font-small);
+    font-size: 16px;
+}
+
+/* Placeholder với font pixel */
+::placeholder {
+    font-family: var(--pixel-font-small);
+    font-size: 16px;
+    color: #6c757d;
+}
+
+/* Validation messages với font pixel */
+.text-danger, .text-success, .text-warning, .text-info {
+    font-family: var(--pixel-font-small);
+    font-size: 14px;
+}
+
+/* Custom scrollbar với font pixel */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

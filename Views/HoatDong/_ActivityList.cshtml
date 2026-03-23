@@ -1,0 +1,265 @@
+@model IEnumerable<QuanLyHoatDongNgoaiKhoa.Models.HoatDong>
+
+<style>
+    /* Modern Activity Card Styles */
+    .activity-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+        position: relative;
+    }
+
+    .activity-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899);
+    }
+
+    .activity-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        padding: 1.5rem;
+        position: relative;
+    }
+
+    .card-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        opacity: 0.3;
+    }
+
+    .card-title {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 1.1rem;
+        line-height: 1.4;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        position: relative;
+        z-index: 1;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .card-text {
+        color: #6b7280;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .activity-info {
+        margin-bottom: 1.5rem;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+        padding: 0.75rem;
+        background: rgba(99, 102, 241, 0.05);
+        border-radius: 12px;
+        border: 1px solid rgba(99, 102, 241, 0.1);
+    }
+
+    .info-item i {
+        color: #6366f1;
+        font-size: 1rem;
+        width: 20px;
+        text-align: center;
+    }
+
+    .info-item span {
+        color: #374151;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .activity-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .activity-meta small {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #9ca3af;
+        font-size: 0.85rem;
+    }
+
+    .activity-meta i {
+        color: #6366f1;
+    }
+
+    .card-footer {
+        padding: 1.5rem;
+        background: rgba(248, 250, 252, 0.8);
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        border: 2px solid;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-outline-primary {
+        color: #6366f1;
+        border-color: #6366f1;
+        background: transparent;
+    }
+
+    .btn-outline-primary:hover {
+        background: #6366f1;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-outline-warning {
+        color: #f59e0b;
+        border-color: #f59e0b;
+        background: transparent;
+    }
+
+    .btn-outline-warning:hover {
+        background: #f59e0b;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .btn-group {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+@foreach (var item in Model)
+{
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="activity-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title">@item.TieuDe</h5>
+                <span class="badge @GetStatusClass(item.TrangThaiHoatDong?.TenTrangThai)">
+                    @item.TrangThaiHoatDong?.TenTrangThai
+                </span>
+            </div>
+            <div class="card-body">
+                <p class="card-text">@(item.MoTa?.Length > 100 ? item.MoTa.Substring(0, 100) + "..." : item.MoTa)</p>
+                
+                <div class="activity-info">
+                    <div class="info-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>@item.ThoiGianBatDau.ToString("dd/MM/yyyy HH:mm")</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>@item.DiaDiem?.TenDiaDiem</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-users"></i>
+                        <span>@item.DanhSachDangKy?.Count() / @item.SoLuongToiDa</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-money-bill"></i>
+                        <span>@item.ChiPhi.ToString("N0") VNĐ</span>
+                    </div>
+                </div>
+
+                <div class="activity-meta">
+                    <small>
+                        <i class="fas fa-user"></i> @item.NguoiTao?.UserName
+                    </small>
+                    <small>
+                        <i class="fas fa-clock"></i> @item.NgayTao.ToString("dd/MM/yyyy")
+                    </small>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="btn-group">
+                    <a asp-action="Details" asp-route-id="@item.MaHoatDong" class="btn btn-outline-primary">
+                        <i class="fas fa-eye"></i> Chi tiết
+                    </a>
+                    @if (User.IsInRole("Admin") || (User.IsInRole("Teacher") && item.NguoiTaoId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.MaHoatDong" class="btn btn-outline-warning">
+                            <i class="fas fa-edit"></i> Sửa
+                        </a>
+                    }
+                    @* Bỏ nút đăng ký màu xanh - chỉ giữ lại các nút khác *@
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@functions {
+    string GetStatusClass(string? status)
+    {
+        return status switch
+        {
+            "Chờ xác nhận" => "bg-warning",
+            "Đã xác nhận" => "bg-success",
+            "Đã từ chối" => "bg-danger",
+            "Đã hủy" => "bg-secondary",
+            _ => "bg-info"
+        };
+    }
+} 

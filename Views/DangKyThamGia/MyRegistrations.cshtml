@@ -1,0 +1,350 @@
+@model IEnumerable<QuanLyHoatDongNgoaiKhoa.Models.DangKyThamGia>
+
+@{
+    ViewData["Title"] = "Đăng Ký Của Tôi";
+}
+
+<style>
+    /* Tùy chỉnh màu chữ cho các badge trạng thái */
+    .badge-warning {
+        background-color: #ffc107 !important;
+        color: #000 !important;
+        font-weight: 600;
+    }
+    
+    .badge-success {
+        background-color: #28a745 !important;
+        color: #fff !important;
+        font-weight: 600;
+    }
+    
+    .badge-secondary {
+        background-color: #6c757d !important;
+        color: #fff !important;
+        font-weight: 600;
+    }
+    
+    .badge-danger {
+        background-color: #dc3545 !important;
+        color: #fff !important;
+        font-weight: 600;
+    }
+    
+    .badge-info {
+        background-color: #17a2b8 !important;
+        color: #fff !important;
+        font-weight: 600;
+    }
+</style>
+
+@Html.AntiForgeryToken()
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card pixel-border">
+                <div class="card-header bg-success text-white">
+                    <h2 class="mb-0">
+                        <i class="fas fa-user-check"></i> Đăng Ký Của Tôi
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <!-- Realtime Status -->
+                    <div class="alert alert-info" id="realtime-status">
+                        <i class="fas fa-wifi"></i> Kết nối realtime: <span id="connection-status">Đang kết nối...</span>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <div class="card bg-warning text-white">
+                                <div class="card-body text-center">
+                                    <h5>Chờ xác nhận</h5>
+                                    <h3 id="pending-count">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body text-center">
+                                    <h5>Đã xác nhận</h5>
+                                    <h3 id="confirmed-count">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-danger text-white">
+                                <div class="card-body text-center">
+                                    <h5>Từ chối</h5>
+                                    <h3 id="rejected-count">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-info text-white">
+                                <div class="card-body text-center">
+                                    <h5>Tổng cộng</h5>
+                                    <h3 id="total-count">0</h3>
+                                </div>
+                    </div>
+                </div>
+            </div>
+
+                    @if (Model.Any())
+                    {
+                        <div class="activity-timeline" id="my-registrations-timeline">
+                            @foreach (var dangKy in Model.OrderByDescending(d => d.NgayDangKy))
+                            {
+                                <div class="activity-item" data-registration-id="@dangKy.MaDangKy" data-status="@dangKy.MaTrangThaiDangKy">
+                                    <div class="activity-card">
+                                        <div class="activity-date">
+                                            <i class="fas fa-clock me-1"></i>
+                                            @dangKy.NgayDangKy.ToString("dd/MM/yyyy HH:mm")
+                                        </div>
+                                        <div class="activity-title">@dangKy.HoatDong?.TieuDe</div>
+                                        <div class="activity-description">
+                                            <strong>Thời gian:</strong> @dangKy.HoatDong?.ThoiGianBatDau.ToString("dd/MM/yyyy HH:mm") - @dangKy.HoatDong?.ThoiGianKetThuc.ToString("HH:mm")
+                                        </div>
+                                        <div class="activity-meta">
+                                            <span>
+                                                <i class="fas fa-calendar me-1"></i>
+                                                @dangKy.HoatDong?.ThoiGianBatDau.ToString("dd/MM/yyyy")
+                                            </span>
+                                                                                         <span class="activity-status @GetStatusClass(dangKy.TrangThaiDangKy?.TenTrangThaiDangKy)">
+                                                 @dangKy.TrangThaiDangKy?.TenTrangThaiDangKy
+                                             </span>
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(dangKy.GhiChu))
+                                        {
+                                            <div class="activity-note">
+                                                <strong>Ghi chú:</strong> @dangKy.GhiChu
+                                            </div>
+                                        }
+                                        <div class="mt-3">
+                                            @if (dangKy.MaTrangThaiDangKy == 1) // Chờ xác nhận
+                                            {
+                                                <button class="btn btn-danger btn-sm" 
+                                                        onclick="cancelMyRegistration(@dangKy.MaDangKy)">
+                                                    <i class="fas fa-times me-1"></i>Hủy Đăng Ký
+                                                </button>
+                                            }
+                                            <a href="/HoatDong/Details/@dangKy.MaHoatDong" class="btn btn-info btn-sm">
+                                                <i class="fas fa-eye me-1"></i>Xem Chi Tiết
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <div class="mb-4">
+                                <i class="fas fa-clipboard fa-4x text-muted"></i>
+                                                </div>
+                            <h5 class="text-muted">Bạn chưa đăng ký hoạt động nào</h5>
+                            <p class="text-muted">Hãy đăng ký tham gia các hoạt động ngoại khóa thú vị!</p>
+                            <a href="/HoatDong" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>Xem Hoạt Động
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Khởi tạo realtime cho trang đăng ký của tôi
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMyRegistrationsRealtime();
+            updateMyStatistics();
+        });
+
+        function initializeMyRegistrationsRealtime() {
+            if (window.dangKyRealtime) {
+                // Cập nhật trạng thái kết nối
+                const connectionStatus = document.getElementById('connection-status');
+                if (window.dangKyRealtime.connection) {
+                    window.dangKyRealtime.connection.onreconnected(() => {
+                        connectionStatus.textContent = 'Đã kết nối';
+                        connectionStatus.className = 'text-success';
+                    });
+                    
+                    window.dangKyRealtime.connection.onreconnecting(() => {
+                        connectionStatus.textContent = 'Đang kết nối lại...';
+                        connectionStatus.className = 'text-warning';
+                    });
+                    
+                    window.dangKyRealtime.connection.onclose(() => {
+                        connectionStatus.textContent = 'Mất kết nối';
+                        connectionStatus.className = 'text-danger';
+                    });
+                }
+            }
+        }
+
+        function updateMyStatistics() {
+            const items = document.querySelectorAll('#my-registrations-timeline .activity-item');
+            let pending = 0, confirmed = 0, rejected = 0;
+
+            items.forEach(item => {
+                const status = parseInt(item.dataset.status);
+                switch (status) {
+                    case 1: pending++; break;
+                    case 2: confirmed++; break;
+                    case 3: rejected++; break;
+                }
+            });
+
+            document.getElementById('pending-count').textContent = pending;
+            document.getElementById('confirmed-count').textContent = confirmed;
+            document.getElementById('rejected-count').textContent = rejected;
+            document.getElementById('total-count').textContent = pending + confirmed + rejected;
+        }
+
+        function cancelMyRegistration(registrationId) {
+            if (confirm('Bạn có chắc chắn muốn hủy đăng ký này?')) {
+                if (window.dangKyRealtime) {
+                    window.dangKyRealtime.cancelRegistration(registrationId);
+                } else {
+                    // Fallback nếu không có realtime
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/DangKyThamGia/Delete/${registrationId}`;
+                    
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = '__RequestVerificationToken';
+                    input.value = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                    
+                    form.appendChild(input);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            }
+        }
+
+        // Auto refresh statistics khi có thay đổi
+        if (window.dangKyRealtime) {
+            window.dangKyRealtime.connection.on("ReceiveNotification", () => {
+                setTimeout(updateMyStatistics, 1000);
+            });
+        }
+    </script>
+}
+
+@functions {
+    private string GetStatusClass(string? status)
+    {
+        return status switch
+        {
+            "Chờ xác nhận" => "status-pending",
+            "Đã xác nhận" => "status-confirmed",
+            "Từ chối" => "status-cancelled",
+            "Đã hủy" => "status-cancelled",
+            _ => "status-pending"
+        };
+    }
+}
+
+<style>
+    .activity-timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+    
+    .activity-timeline::before {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(135deg, var(--pixel-blue-dark), var(--pixel-blue-pastel));
+    }
+    
+    .activity-item {
+        position: relative;
+        margin-bottom: 30px;
+        padding-left: 30px;
+    }
+    
+    .activity-item::before {
+        content: '';
+        position: absolute;
+        left: -7px;
+        top: 20px;
+        width: 16px;
+        height: 16px;
+        background: linear-gradient(135deg, var(--pixel-blue-dark), var(--pixel-blue-pastel));
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 0 0 2px var(--pixel-blue-dark);
+    }
+    
+    .activity-card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border-left: 4px solid var(--pixel-blue-dark);
+    }
+    
+    .activity-card:hover {
+        transform: translateX(5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    .activity-date {
+        font-size: 0.9rem;
+        color: var(--pixel-blue-dark);
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    
+    .activity-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--pixel-dark);
+        margin-bottom: 10px;
+    }
+    
+    .activity-description {
+        color: #6b7280;
+        margin-bottom: 15px;
+        line-height: 1.5;
+    }
+
+    .activity-note {
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        border-left: 3px solid var(--pixel-orange);
+    }
+    
+    .activity-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+        color: #6b7280;
+    }
+    
+    .activity-status {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .status-pending { background: #fef3c7; color: #92400e; }
+    .status-confirmed { background: #d1fae5; color: #065f46; }
+    .status-active { background: #dbeafe; color: #1e40af; }
+    .status-completed { background: #e0e7ff; color: #3730a3; }
+    .status-cancelled { background: #fee2e2; color: #991b1b; }
+</style>

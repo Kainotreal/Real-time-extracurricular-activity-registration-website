@@ -1,0 +1,289 @@
+@model IEnumerable<QuanLyHoatDongNgoaiKhoa.Models.DangKyThamGia>
+
+@{
+    ViewData["Title"] = "Danh Sách Đăng Ký Tham Gia";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card pixel-border">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">
+                        <i class="fas fa-list"></i> Danh Sách Đăng Ký Tham Gia
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <!-- Realtime Status -->
+                    <div class="alert alert-info" id="realtime-status">
+                        <i class="fas fa-wifi"></i> Kết nối realtime: <span id="connection-status">Đang kết nối...</span>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="statusFilter" class="form-label">Trạng thái:</label>
+                            <select class="form-select" id="statusFilter">
+                                <option value="">Tất cả</option>
+                                <option value="1">Chờ xác nhận</option>
+                                <option value="2">Đã xác nhận</option>
+                                <option value="3">Từ chối</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="activityFilter" class="form-label">Hoạt động:</label>
+                            <select class="form-select" id="activityFilter">
+                                <option value="">Tất cả</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="dateFilter" class="form-label">Ngày đăng ký:</label>
+                            <input type="date" class="form-control" id="dateFilter">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">&nbsp;</label>
+                            <button class="btn btn-primary w-100" onclick="applyFilters()">
+                                <i class="fas fa-filter"></i> Lọc
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body text-center">
+                                    <h5>Chờ xác nhận</h5>
+                                    <h3 id="pending-count">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body text-center">
+                                    <h5>Đã xác nhận</h5>
+                                    <h3 id="confirmed-count">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-warning text-white">
+                                <div class="card-body text-center">
+                                    <h5>Từ chối</h5>
+                                    <h3 id="rejected-count">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-info text-white">
+                                <div class="card-body text-center">
+                                    <h5>Tổng cộng</h5>
+                                    <h3 id="total-count">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover" id="dangky-table">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Mã ĐK</th>
+                                    <th>Hoạt động</th>
+                                    <th>Người đăng ký</th>
+                                    <th>Ngày đăng ký</th>
+                                    <th>Trạng thái</th>
+                                    <th>Ghi chú</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr data-registration-id="@item.MaDangKy" data-status="@item.MaTrangThaiDangKy">
+                                        <td>@item.MaDangKy</td>
+                                        <td>
+                                            <a href="@Url.Action("Details", "HoatDong", new { id = item.MaHoatDong })">
+                                                @item.HoatDong?.TieuDe
+                                            </a>
+                                        </td>
+                                        <td>@item.UserId</td>
+                                        <td>@item.NgayDangKy.ToString("dd/MM/yyyy HH:mm")</td>
+                                        <td>
+                                            <span class="badge status-badge status-@item.MaTrangThaiDangKy">
+                                                @item.TrangThaiDangKy?.TenTrangThaiDangKy
+                                            </span>
+                                        </td>
+                                        <td>@(string.IsNullOrEmpty(item.GhiChu) ? "Không có" : item.GhiChu)</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a href="@Url.Action("Details", new { id = item.MaDangKy })" 
+                                                   class="btn btn-sm btn-info">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                @if (item.MaTrangThaiDangKy == 1) // Chờ xác nhận
+                                                {
+                                                    <button class="btn btn-sm btn-success" 
+                                                            onclick="confirmRegistration(@item.MaDangKy, true)">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger" 
+                                                            onclick="confirmRegistration(@item.MaDangKy, false)">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                }
+                                                <a href="@Url.Action("Edit", new { id = item.MaDangKy })" 
+                                                   class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Khởi tạo realtime cho trang danh sách đăng ký
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDangKyRealtime();
+            updateStatistics();
+            loadFilters();
+        });
+
+        function initializeDangKyRealtime() {
+            if (window.dangKyRealtime) {
+                // Cập nhật trạng thái kết nối
+                const connectionStatus = document.getElementById('connection-status');
+                if (window.dangKyRealtime.connection) {
+                    window.dangKyRealtime.connection.onreconnected(() => {
+                        connectionStatus.textContent = 'Đã kết nối';
+                        connectionStatus.className = 'text-success';
+                    });
+                    
+                    window.dangKyRealtime.connection.onreconnecting(() => {
+                        connectionStatus.textContent = 'Đang kết nối lại...';
+                        connectionStatus.className = 'text-warning';
+                    });
+                    
+                    window.dangKyRealtime.connection.onclose(() => {
+                        connectionStatus.textContent = 'Mất kết nối';
+                        connectionStatus.className = 'text-danger';
+                    });
+                }
+            }
+        }
+
+        function updateStatistics() {
+            const rows = document.querySelectorAll('#dangky-table tbody tr');
+            let pending = 0, confirmed = 0, rejected = 0;
+
+            rows.forEach(row => {
+                const status = parseInt(row.dataset.status);
+                switch (status) {
+                    case 1: pending++; break;
+                    case 2: confirmed++; break;
+                    case 3: rejected++; break;
+                }
+            });
+
+            document.getElementById('pending-count').textContent = pending;
+            document.getElementById('confirmed-count').textContent = confirmed;
+            document.getElementById('rejected-count').textContent = rejected;
+            document.getElementById('total-count').textContent = pending + confirmed + rejected;
+        }
+
+        function loadFilters() {
+            // Load danh sách hoạt động cho filter
+            const activityFilter = document.getElementById('activityFilter');
+            const activities = new Set();
+            
+            document.querySelectorAll('#dangky-table tbody tr').forEach(row => {
+                const activityName = row.querySelector('td:nth-child(2) a').textContent;
+                activities.add(activityName);
+            });
+
+            activities.forEach(activity => {
+                const option = document.createElement('option');
+                option.value = activity;
+                option.textContent = activity;
+                activityFilter.appendChild(option);
+            });
+        }
+
+        function applyFilters() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const activityFilter = document.getElementById('activityFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+
+            const rows = document.querySelectorAll('#dangky-table tbody tr');
+            
+            rows.forEach(row => {
+                let show = true;
+
+                // Filter theo trạng thái
+                if (statusFilter && row.dataset.status !== statusFilter) {
+                    show = false;
+                }
+
+                // Filter theo hoạt động
+                if (activityFilter) {
+                    const activityName = row.querySelector('td:nth-child(2) a').textContent;
+                    if (activityName !== activityFilter) {
+                        show = false;
+                    }
+                }
+
+                // Filter theo ngày
+                if (dateFilter) {
+                    const registrationDate = row.querySelector('td:nth-child(4)').textContent;
+                    const date = new Date(registrationDate.split(' ')[0].split('/').reverse().join('-'));
+                    const filterDate = new Date(dateFilter);
+                    if (date.toDateString() !== filterDate.toDateString()) {
+                        show = false;
+                    }
+                }
+
+                row.style.display = show ? '' : 'none';
+            });
+
+            updateStatistics();
+        }
+
+        function confirmRegistration(registrationId, dongY) {
+            if (window.dangKyRealtime) {
+                window.dangKyRealtime.confirmRegistration(registrationId, dongY);
+            } else {
+                // Fallback nếu không có realtime
+                // Gửi form thông thường
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/DangKyThamGia/XacNhan/${registrationId}`;
+                
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'dongY';
+                input.value = dongY;
+                
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        // Auto refresh statistics khi có thay đổi
+        if (window.dangKyRealtime) {
+            window.dangKyRealtime.connection.on("ReceiveNotification", () => {
+                setTimeout(updateStatistics, 1000);
+            });
+        }
+    </script>
+}

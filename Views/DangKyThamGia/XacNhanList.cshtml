@@ -1,0 +1,405 @@
+@model IEnumerable<QuanLyHoatDongNgoaiKhoa.Models.DangKyThamGia>
+
+@{
+    ViewData["Title"] = "Danh sách đăng ký chờ xác nhận";
+}
+
+@{
+    // Add anti-forgery token for JavaScript
+    @Html.AntiForgeryToken()
+}
+
+<div class="page-header">
+    <div class="header-content">
+        <div class="header-title">
+            <i class="fas fa-clock header-icon"></i>
+            <h1>Danh sách đăng ký chờ xác nhận</h1>
+        </div>
+        <div class="header-actions">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-list"></i>
+                <span>Xem tất cả đăng ký</span>
+            </a>
+        </div>
+    </div>
+    <div class="header-stats">
+        <div class="stat-item">
+            <i class="fas fa-clock"></i>
+            <span>@Model.Count() đăng ký chờ xác nhận</span>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-calendar"></i>
+            <span>@Model.GroupBy(d => d.MaHoatDong).Count() hoạt động</span>
+        </div>
+    </div>
+</div>
+
+
+
+@if (Model.Any())
+{
+    <div class="registration-list">
+        @foreach (var dangKy in Model)
+        {
+            <div class="registration-card" data-id="@dangKy.MaDangKy" data-hoat-dong-id="@dangKy.MaHoatDong" data-registration-id="@dangKy.MaDangKy">
+                <div class="card-header">
+                    <div class="registration-info">
+                        <h5 class="activity-title">
+                            <i class="fas fa-calendar-check"></i>
+                            @dangKy.HoatDong?.TieuDe
+                        </h5>
+                        <div class="registration-meta">
+                            <span class="registration-date">
+                                <i class="fas fa-calendar"></i>
+                                Đăng ký: @dangKy.NgayDangKy.ToString("dd/MM/yyyy HH:mm")
+                            </span>
+                            <span class="registration-user">
+                                <i class="fas fa-user"></i>
+                                Người đăng ký: @dangKy.UserId
+                            </span>
+                        </div>
+                    </div>
+                    <div class="registration-status">
+                        <span class="badge status-pending">
+                            <i class="fas fa-clock"></i>
+                            @dangKy.TrangThaiDangKy?.TenTrangThaiDangKy
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="activity-details">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="detail-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <strong>Thời gian:</strong>
+                                    <span>@dangKy.HoatDong?.ThoiGianBatDau.ToString("dd/MM/yyyy HH:mm") - @dangKy.HoatDong?.ThoiGianKetThuc.ToString("dd/MM/yyyy HH:mm")</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="detail-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <strong>Địa điểm:</strong>
+                                    <span>@(dangKy.HoatDong?.DiaDiem?.TenDiaDiem ?? "Chưa cập nhật")</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="detail-item">
+                                    <i class="fas fa-users"></i>
+                                    <strong>Số lượng:</strong>
+                                    <span>@(dangKy.HoatDong?.DanhSachDangKy?.Count(d => d.MaTrangThaiDangKy == 2) ?? 0)/@dangKy.HoatDong?.SoLuongToiDa người</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="detail-item">
+                                    <i class="fas fa-money-bill"></i>
+                                    <strong>Chi phí:</strong>
+                                    <span>@dangKy.HoatDong?.ChiPhi.ToString("N0") VNĐ</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(dangKy.GhiChu))
+                        {
+                            <div class="detail-item">
+                                <i class="fas fa-comment"></i>
+                                <strong>Ghi chú:</strong>
+                                <span>@dangKy.GhiChu</span>
+                            </div>
+                        }
+                    </div>
+                    
+                    <div class="registration-actions">
+                        <button type="button" class="btn btn-success confirm-btn confirm-registration-btn" 
+                                data-id="@dangKy.MaDangKy" 
+                                data-action="confirm"
+                                onclick="window.dangKyRealtime.confirmRegistration(@dangKy.MaDangKy, true)">
+                            <i class="fas fa-check"></i> Xác nhận
+                        </button>
+                        
+                        <button type="button" class="btn btn-danger reject-btn reject-registration-btn" 
+                                data-id="@dangKy.MaDangKy" 
+                                data-action="reject"
+                                onclick="window.dangKyRealtime.confirmRegistration(@dangKy.MaDangKy, false)">
+                            <i class="fas fa-times"></i> Từ chối
+                        </button>
+                        
+                        <a asp-action="Details" asp-controller="HoatDong" asp-route-id="@dangKy.MaHoatDong" class="btn btn-info">
+                            <i class="fas fa-eye"></i> Xem chi tiết
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="empty-state">
+        <div class="empty-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h3>Không có đăng ký nào chờ xác nhận</h3>
+        <p>Tất cả đăng ký đã được xử lý hoặc chưa có đăng ký mới.</p>
+        <a asp-action="Index" class="btn btn-primary">
+            <i class="fas fa-list"></i> Xem tất cả đăng ký
+        </a>
+    </div>
+}
+
+<style>
+.registration-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.registration-card {
+    background: var(--pixel-white);
+    border: var(--pixel-border);
+    border-radius: 12px;
+    box-shadow: var(--pixel-shadow);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.registration-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.registration-card .card-header {
+    background: linear-gradient(135deg, var(--pixel-blue-light), var(--pixel-blue-pastel));
+    padding: 20px;
+    border-bottom: var(--pixel-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.registration-info {
+    flex: 1;
+}
+
+.activity-title {
+    color: var(--pixel-blue-dark);
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 1.2rem;
+}
+
+.registration-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 0.9rem;
+    color: var(--pixel-dark);
+}
+
+.registration-meta span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.registration-status {
+    text-align: right;
+}
+
+.status-pending {
+    background: var(--pixel-yellow);
+    color: var(--pixel-dark);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    border: 2px solid var(--pixel-black);
+    box-shadow: 2px 2px 0px var(--pixel-black);
+}
+
+.registration-card .card-body {
+    padding: 20px;
+}
+
+.activity-details {
+    margin-bottom: 20px;
+}
+
+.detail-item {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.detail-item i {
+    color: var(--pixel-blue-dark);
+    width: 16px;
+}
+
+.registration-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-top: 15px;
+    border-top: 1px solid var(--pixel-blue-light);
+}
+
+.registration-actions .btn {
+    font-family: 'VT323', monospace;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border: var(--pixel-border);
+    box-shadow: var(--pixel-shadow);
+    transition: all 0.3s ease;
+}
+
+.registration-actions .btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0px var(--pixel-black);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--pixel-white);
+    border: var(--pixel-border);
+    border-radius: 12px;
+    box-shadow: var(--pixel-shadow);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: var(--pixel-green);
+    margin-bottom: 20px;
+}
+
+.empty-state h3 {
+    color: var(--pixel-blue-dark);
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    color: var(--pixel-dark);
+    margin-bottom: 20px;
+}
+
+@@media (max-width: 768px) {
+    .registration-meta {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .registration-actions {
+        flex-direction: column;
+    }
+    
+    .registration-actions .btn {
+        width: 100%;
+    }
+}
+</style>
+
+<script>
+// Cập nhật danh sách đăng ký theo thời gian thực
+document.addEventListener('DOMContentLoaded', function() {
+    // Khởi tạo realtime functions nếu chưa có
+    if (window.realtimeFunctions) {
+        // Lắng nghe thông báo đăng ký mới
+        if (window.realtimeNotifications) {
+            window.realtimeNotifications.onNotificationReceived = function(notification) {
+                if (notification.title === 'Đăng ký mới' || notification.message.includes('đăng ký mới')) {
+                    // Cập nhật danh sách khi có đăng ký mới
+                    updateRegistrationList();
+                }
+            };
+        }
+        
+        // Hàm cập nhật danh sách
+        function updateRegistrationList() {
+            fetch('/DangKyThamGia/XacNhanList', {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                // Tạo temporary div để parse HTML
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                
+                // Lấy danh sách mới
+                const newList = tempDiv.querySelector('.registration-list');
+                const currentList = document.querySelector('.registration-list');
+                const newEmptyState = tempDiv.querySelector('.empty-state');
+                const currentEmptyState = document.querySelector('.empty-state');
+                
+                if (newList && currentList) {
+                    // Cập nhật danh sách
+                    currentList.innerHTML = newList.innerHTML;
+                    
+                    // Xóa empty state nếu có
+                    if (currentEmptyState) {
+                        currentEmptyState.remove();
+                    }
+                    
+                    // Cập nhật số lượng
+                    updateStats();
+                    
+                    // Hiển thị thông báo
+                    if (window.realtimeNotifications) {
+                        window.realtimeNotifications.showNotification({
+                            id: 'list-updated-' + Date.now(),
+                            title: 'Danh sách đã cập nhật',
+                            message: 'Danh sách đăng ký chờ xác nhận đã được cập nhật',
+                            type: 'info',
+                            timestamp: new Date().toLocaleTimeString('vi-VN')
+                        });
+                    }
+                } else if (newEmptyState && !currentEmptyState) {
+                    // Nếu có empty state mới và không có empty state hiện tại
+                    const container = document.querySelector('.registration-list').parentNode;
+                    container.innerHTML = newEmptyState.outerHTML;
+                    
+                    // Cập nhật số lượng
+                    updateStats();
+                }
+            })
+            .catch(error => {
+                console.error('Lỗi cập nhật danh sách:', error);
+            });
+        }
+        
+        // Hàm cập nhật số lượng
+        function updateStats() {
+            // Gọi API để lấy số lượng chính xác từ server
+            fetch('/api/dangky/pending-count')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const countElement = document.querySelector('.stat-item span');
+                        if (countElement) {
+                            countElement.textContent = `${data.count} đăng ký chờ xác nhận`;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi cập nhật số lượng:', error);
+                    // Fallback: đếm trên trang
+                    const registrationCards = document.querySelectorAll('.registration-card');
+                    const count = registrationCards.length;
+                    const countElement = document.querySelector('.stat-item span');
+                    if (countElement) {
+                        countElement.textContent = `${count} đăng ký chờ xác nhận`;
+                    }
+                });
+        }
+        
+        // Cập nhật danh sách mỗi 30 giây
+        setInterval(updateRegistrationList, 30000);
+    }
+});
+</script>

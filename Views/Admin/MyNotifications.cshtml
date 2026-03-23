@@ -1,0 +1,338 @@
+@model IEnumerable<QuanLyHoatDongNgoaiKhoa.Models.ThongBao>
+
+@{
+    ViewData["Title"] = "Thông báo của tôi";
+    var isAdmin = User.IsInRole("Admin");
+    var isTeacher = User.IsInRole("Teacher");
+    var isStudent = User.IsInRole("Student");
+}
+
+<div class="notifications-container">
+    <div class="card">
+        <div class="card-header">
+            <h2><i class="fas fa-bell"></i> Thông báo của tôi</h2>
+            <small class="text-muted">
+                @if (isAdmin)
+                {
+                    <span>Tất cả thông báo hệ thống (@Model.Count() thông báo)</span>
+                }
+                else if (isTeacher)
+                {
+                    <span>Thông báo từ hoạt động của bạn (@Model.Count() thông báo)</span>
+                }
+                else
+                {
+                    <span>Thông báo từ hoạt động bạn đã đăng ký (@Model.Count() thông báo)</span>
+                }
+            </small>
+        </div>
+        <div class="card-body">
+            @if (!Model.Any())
+            {
+                <div class="text-center py-4">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">Chưa có thông báo nào</h4>
+                    <p class="text-muted">
+                        @if (isAdmin)
+                        {
+                            <span>Chưa có thông báo nào trong hệ thống</span>
+                        }
+                        else if (isTeacher)
+                        {
+                            <span>Chưa có thông báo nào từ hoạt động của bạn</span>
+                        }
+                        else
+                        {
+                            <span>Chưa có thông báo nào từ hoạt động bạn đã đăng ký</span>
+                        }
+                    </p>
+                </div>
+            }
+            else
+            {
+                <div class="notifications-list">
+                    @foreach (var thongBao in Model.OrderByDescending(t => t.NgayTao))
+                    {
+                        <div class="notification-item @GetNotificationClass(thongBao.LoaiThongBao)">
+                            <div class="notification-icon">
+                                @Html.Raw(GetNotificationIcon(thongBao.LoaiThongBao))
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-header">
+                                    <h5 class="notification-title">@thongBao.TieuDe</h5>
+                                    <small class="notification-time">@GetTimeAgo(thongBao.NgayTao)</small>
+                                </div>
+                                <p class="notification-message">@Html.Raw(thongBao.NoiDung?.Replace("\n", "<br>"))</p>
+                                @if (thongBao.HoatDong != null)
+                                {
+                                    <div class="notification-activity">
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar"></i> 
+                                            Hoạt động: @thongBao.HoatDong.TieuDe
+                                            @if (isAdmin && thongBao.HoatDong.NguoiTaoId != null)
+                                            {
+                                                <span class="ms-2">
+                                                    <i class="fas fa-user"></i>
+                                                    Tạo bởi: @thongBao.HoatDong.NguoiTao?.UserName
+                                                </span>
+                                            }
+                                        </small>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .notifications-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .notifications-list {
+        max-height: 600px;
+        overflow-y: auto;
+    }
+
+    .notification-item {
+        display: flex;
+        align-items: flex-start;
+        padding: 20px;
+        margin-bottom: 15px;
+        border-radius: 12px;
+        border: 3px solid #000;
+        background: #ffffff;
+        box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .notification-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: #4682B4;
+    }
+
+    .notification-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.8);
+    }
+
+    .notification-item.success::before {
+        background: #4ecdc4;
+    }
+
+    .notification-item.warning::before {
+        background: #ffe66d;
+    }
+
+    .notification-item.error::before {
+        background: #ff6b6b;
+    }
+
+    .notification-item.info::before {
+        background: #4682B4;
+    }
+
+    .notification-icon {
+        margin-right: 15px;
+        font-size: 1.5rem;
+        margin-top: 2px;
+        flex-shrink: 0;
+    }
+
+    .notification-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .notification-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+    }
+
+    .notification-title {
+        margin: 0;
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 1.1rem;
+        line-height: 1.3;
+    }
+
+    .notification-time {
+        color: #95a5a6;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        margin-left: 10px;
+    }
+
+    .notification-message {
+        margin: 0 0 10px 0;
+        color: #2c3e50;
+        line-height: 1.5;
+        word-wrap: break-word;
+        white-space: pre-line;
+        max-width: 100%;
+        overflow-wrap: break-word;
+        font-size: 0.95rem;
+    }
+
+    .notification-activity {
+        padding-top: 10px;
+        border-top: 1px solid rgba(0,0,0,0.1);
+        margin-top: 10px;
+    }
+
+    .notification-activity small {
+        color: #7f8c8d;
+        font-size: 0.85rem;
+    }
+
+    .notification-activity i {
+        margin-right: 5px;
+        color: #3498db;
+    }
+
+    /* Empty state styling */
+    .text-center.py-4 {
+        padding: 40px 20px;
+    }
+
+    .text-center.py-4 i {
+        color: #bdc3c7;
+        margin-bottom: 20px;
+    }
+
+    .text-center.py-4 h4 {
+        color: #7f8c8d;
+        margin-bottom: 10px;
+    }
+
+    .text-center.py-4 p {
+        color: #95a5a6;
+        font-size: 0.9rem;
+    }
+
+    @@media (max-width: 768px) {
+        .notifications-container {
+            padding: 10px;
+        }
+
+        .notification-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .notification-time {
+            margin-left: 0;
+            margin-top: 5px;
+        }
+        
+        .notification-message {
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .notification-item {
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .notification-icon {
+            font-size: 1.3rem;
+        }
+
+        .notification-title {
+            font-size: 1rem;
+        }
+    }
+
+    /* Scrollbar styling */
+    .notifications-list::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .notifications-list::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .notifications-list::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+    }
+
+    .notifications-list::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+</style>
+
+@functions {
+    string GetNotificationClass(string? loaiThongBao)
+    {
+        return loaiThongBao switch
+        {
+            "XacNhan" => "success",
+            "TuChoi" => "error",
+            "CapNhat" => "info",
+            "Huy" => "warning",
+            _ => "info"
+        };
+    }
+
+    string GetNotificationIcon(string? loaiThongBao)
+    {
+        return loaiThongBao switch
+        {
+            "XacNhan" => "<i class=\"fas fa-check-circle\" style=\"color: var(--pixel-green);\"></i>",
+            "TuChoi" => "<i class=\"fas fa-times-circle\" style=\"color: var(--pixel-red);\"></i>",
+            "CapNhat" => "<i class=\"fas fa-edit\" style=\"color: var(--pixel-blue-dark);\"></i>",
+            "Huy" => "<i class=\"fas fa-ban\" style=\"color: var(--pixel-yellow);\"></i>",
+            _ => "<i class=\"fas fa-info-circle\" style=\"color: var(--pixel-blue-dark);\"></i>"
+        };
+    }
+
+    string GetTimeAgo(DateTime ngayTao)
+    {
+        var timeSpan = DateTime.Now - ngayTao;
+
+        if (timeSpan.TotalSeconds < 1)
+        {
+            return "Vừa xong";
+        }
+        else if (timeSpan.TotalMinutes < 1)
+        {
+            return $"{(int)timeSpan.TotalSeconds} giây trước";
+        }
+        else if (timeSpan.TotalMinutes < 60)
+        {
+            return $"{(int)timeSpan.TotalMinutes} phút trước";
+        }
+        else if (timeSpan.TotalHours < 24)
+        {
+            return $"{(int)timeSpan.TotalHours} giờ trước";
+        }
+        else if (timeSpan.TotalDays < 30)
+        {
+            return $"{(int)timeSpan.TotalDays} ngày trước";
+        }
+        else
+        {
+            return ngayTao.ToString("dd/MM/yyyy HH:mm");
+        }
+    }
+} 

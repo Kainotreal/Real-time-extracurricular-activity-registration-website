@@ -1,0 +1,384 @@
+@model QuanLyHoatDongNgoaiKhoa.Models.DangKyThamGia
+
+@{
+    ViewData["Title"] = "Đăng ký tham gia";
+    var hoatDong = ViewBag.HoatDong as QuanLyHoatDongNgoaiKhoa.Models.HoatDong;
+}
+
+<div class="page-header">
+    <div class="header-content">
+        <div class="header-title">
+            <i class="fas fa-user-plus header-icon"></i>
+            <h1>Đăng ký tham gia hoạt động</h1>
+        </div>
+    </div>
+</div>
+
+<!-- Hiển thị thông báo -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card glassmorphism-card">
+            <div class="card-header">
+                <h4 class="card-title">
+                    <i class="fas fa-calendar-check"></i>
+                    Thông tin đăng ký
+                </h4>
+            </div>
+            <div class="card-body">
+                @if (hoatDong != null)
+                {
+                    <div class="activity-info mb-4">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h5 class="activity-title">
+                                    <i class="fas fa-star"></i>
+                                    @hoatDong.TieuDe
+                                </h5>
+                                <p class="activity-description">@hoatDong.MoTa</p>
+                                
+                                <div class="activity-details">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="detail-item">
+                                                <i class="fas fa-calendar-alt"></i>
+                                                <strong>Thời gian:</strong>
+                                                <span>@hoatDong.ThoiGianBatDau.ToString("dd/MM/yyyy HH:mm") - @hoatDong.ThoiGianKetThuc.ToString("dd/MM/yyyy HH:mm")</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="detail-item">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                                <strong>Địa điểm:</strong>
+                                                <span>@(hoatDong.DiaDiem?.TenDiaDiem ?? "Chưa cập nhật")</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="detail-item">
+                                                <i class="fas fa-users"></i>
+                                                <strong>Số lượng:</strong>
+                                                <span>@(hoatDong.DanhSachDangKy?.Count(d => d.MaTrangThaiDangKy == 2) ?? 0)/@hoatDong.SoLuongToiDa người</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="detail-item">
+                                                <i class="fas fa-money-bill"></i>
+                                                <strong>Chi phí:</strong>
+                                                <span>@hoatDong.ChiPhi.ToString("N0") VNĐ</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    @if (!string.IsNullOrEmpty(hoatDong.YeuCauThamGia))
+                                    {
+                                        <div class="detail-item">
+                                            <i class="fas fa-clipboard-list"></i>
+                                            <strong>Yêu cầu tham gia:</strong>
+                                            <span>@hoatDong.YeuCauThamGia</span>
+                                        </div>
+                                    }
+                                    
+                                    @if (!string.IsNullOrEmpty(hoatDong.TrangBiCanThiet))
+                                    {
+                                        <div class="detail-item">
+                                            <i class="fas fa-tools"></i>
+                                            <strong>Trang bị cần thiết:</strong>
+                                            <span>@hoatDong.TrangBiCanThiet</span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="activity-status">
+                                    <div class="status-badge @GetStatusClass(hoatDong.TrangThaiHoatDong?.TenTrangThai)">
+                                        <i class="fas fa-@GetStatusIcon(hoatDong.TrangThaiHoatDong?.TenTrangThai)"></i>
+                                        @hoatDong.TrangThaiHoatDong?.TenTrangThai
+                                    </div>
+                                    
+                                    <div class="category-badge">
+                                        <i class="fas fa-@(hoatDong.DanhMucHoatDong?.Icon ?? "tag")"></i>
+                                        @hoatDong.DanhMucHoatDong?.TenDanhMuc
+                                    </div>
+                                    
+                                    <div class="type-badge">
+                                        <i class="fas fa-@(hoatDong.LoaiHoatDong?.Icon ?? "users")"></i>
+                                        @hoatDong.LoaiHoatDong?.TenLoaiHoatDong
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <form asp-action="Create" method="post" id="registerForm">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    
+                    <input type="hidden" asp-for="MaHoatDong" value="@hoatDong?.MaHoatDong" />
+                    
+                    <div class="form-group">
+                        <label asp-for="GhiChu" class="control-label">
+                            <i class="fas fa-comment"></i> Ghi chú (tùy chọn)
+                        </label>
+                        <textarea asp-for="GhiChu" class="form-control pixel-border" rows="3" 
+                                  placeholder="Nhập ghi chú hoặc yêu cầu đặc biệt (nếu có)"></textarea>
+                        <span asp-validation-for="GhiChu" class="text-danger"></span>
+                    </div>
+
+                    <div class="registration-confirmation">
+                        <div class="alert alert-info pixel-border">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Lưu ý:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Đăng ký sẽ được gửi để xác nhận</li>
+                                <li>Bạn sẽ nhận được thông báo khi đăng ký được xác nhận</li>
+                                <li>Có thể hủy đăng ký trước khi hoạt động bắt đầu</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success pixel-border" onclick="">
+                            <i class="fas fa-check"></i> XÁC NHẬN ĐĂNG KÝ
+                        </button>
+                        <a asp-action="Details" asp-controller="HoatDong" asp-route-id="@hoatDong?.MaHoatDong" class="btn btn-secondary pixel-border">
+                            <i class="fas fa-arrow-left"></i> QUAY LẠI
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetStatusClass(string trangThai)
+    {
+        return trangThai switch
+        {
+            "Chờ xác nhận" => "status-pending",
+            "Đã duyệt" => "status-approved",
+            "Đã hủy" => "status-cancelled",
+            "Đã hoàn thành" => "status-completed",
+            _ => "status-default"
+        };
+    }
+
+    string GetStatusIcon(string trangThai)
+    {
+        return trangThai switch
+        {
+            "Chờ xác nhận" => "clock",
+            "Đã duyệt" => "check-circle",
+            "Đã hủy" => "times-circle",
+            "Đã hoàn thành" => "flag-checkered",
+            _ => "question-circle"
+        };
+    }
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Form loaded successfully');
+            
+            // Auto-focus vào textarea ghi chú
+            const ghiChuTextarea = document.getElementById('GhiChu');
+            if (ghiChuTextarea) {
+                ghiChuTextarea.focus();
+            }
+            
+            // Debug: Log hoạt động info
+            console.log('Hoạt động info:', {
+                MaHoatDong: '@hoatDong?.MaHoatDong',
+                TieuDe: '@hoatDong?.TieuDe',
+                MaTrangThai: '@hoatDong?.MaTrangThai',
+                ThoiGianBatDau: '@hoatDong?.ThoiGianBatDau'
+            });
+            
+            // Debug form submit
+            const form = document.getElementById('registrationForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    console.log('Form submit triggered');
+                    console.log('Form action:', form.action);
+                    console.log('Form method:', form.method);
+                    
+                    // Log form data
+                    const formData = new FormData(form);
+                    for (let [key, value] of formData.entries()) {
+                        console.log(`Form data: ${key} = ${value}`);
+                    }
+                });
+            }
+        });
+    </script>
+}
+
+<style>
+.activity-info {
+    background: linear-gradient(135deg, rgba(70, 130, 180, 0.1), rgba(135, 206, 250, 0.1));
+    border-radius: 12px;
+    padding: 20px;
+    border: 2px solid var(--pixel-blue-light);
+    margin-bottom: 20px;
+}
+
+.activity-title {
+    color: var(--pixel-blue-dark);
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.activity-description {
+    color: var(--pixel-dark);
+    font-style: italic;
+    margin-bottom: 15px;
+}
+
+.activity-details {
+    margin-top: 15px;
+}
+
+.detail-item {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.detail-item i {
+    color: var(--pixel-blue-dark);
+    width: 16px;
+}
+
+.activity-status {
+    text-align: center;
+}
+
+.status-badge, .category-badge, .type-badge {
+    display: inline-block;
+    padding: 8px 16px;
+    margin: 5px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border: 2px solid var(--pixel-black);
+    box-shadow: 2px 2px 0px var(--pixel-black);
+}
+
+.status-pending {
+    background: var(--pixel-yellow);
+    color: var(--pixel-dark);
+}
+
+.status-approved {
+    background: var(--pixel-green);
+    color: var(--pixel-white);
+}
+
+.status-cancelled {
+    background: var(--pixel-red);
+    color: var(--pixel-white);
+}
+
+.status-completed {
+    background: var(--pixel-blue);
+    color: var(--pixel-white);
+}
+
+.category-badge, .type-badge {
+    background: var(--pixel-blue-light);
+    color: var(--pixel-dark);
+}
+
+.registration-confirmation {
+    margin: 20px 0;
+}
+
+.form-actions {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.form-actions .btn {
+    margin: 0 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 4px 4px 0px var(--pixel-black);
+}
+
+.form-control.pixel-border {
+    border: var(--pixel-border);
+    box-shadow: var(--pixel-shadow);
+    background: var(--pixel-white);
+}
+
+.form-control.pixel-border:focus {
+    border-color: var(--pixel-blue-dark);
+    box-shadow: 4px 4px 0px var(--pixel-black), 0 0 0 0.2rem rgba(70, 130, 180, 0.25);
+}
+
+.alert.pixel-border {
+    border: var(--pixel-border);
+    box-shadow: var(--pixel-shadow);
+    background: var(--pixel-white);
+}
+
+.btn.pixel-border {
+    border: var(--pixel-border);
+    box-shadow: var(--pixel-shadow);
+    transition: all 0.3s ease;
+}
+
+.btn.pixel-border:hover {
+    transform: translateY(-2px);
+    box-shadow: 4px 4px 0px var(--pixel-black);
+}
+
+.btn-success.pixel-border {
+    background: var(--pixel-green);
+    color: var(--pixel-white);
+}
+
+.btn-secondary.pixel-border {
+    background: var(--pixel-gray);
+    color: var(--pixel-white);
+}
+
+/* Debug styles */
+#submitBtn {
+    cursor: pointer;
+    position: relative;
+    z-index: 10;
+}
+
+#submitBtn:active {
+    transform: translateY(1px);
+    box-shadow: 2px 2px 0px var(--pixel-black);
+}
+</style>
